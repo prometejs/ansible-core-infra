@@ -1,0 +1,21 @@
+---
+- name: Update NGINX configuration
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Copy new NGINX configuration file
+      ansible.builtin.copy:
+        src: ../../files/nginx/*.conf
+        dest: /etc/nginx/
+        owner: root
+        group: root
+        mode: '0644'
+      notify:
+        - restart nginx
+
+  handlers:
+    - name: restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+        daemon_reload: yes

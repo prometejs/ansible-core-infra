@@ -1,0 +1,47 @@
+---
+- name: Configure firewalld
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Install firewalld on RedHat family
+      yum:
+        name: firewalld
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Install ufw on Debian family
+      apt:
+        name: ufw
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+    
+    - name: Start and enable firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Enable ufw
+      command: ufw enable
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Open HTTP and HTTPS ports using firewalld
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: yes
+      loop:
+        - http
+        - https
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Allow HTTP and HTTPS ports using ufw
+      community.general.ufw:
+        rule: allow
+        name: "{{ item }}"
+      loop:
+        - http
+        - https
+      when: ansible_facts['os_family'] == "Debian"

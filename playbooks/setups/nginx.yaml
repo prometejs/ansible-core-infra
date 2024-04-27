@@ -1,0 +1,16 @@
+---
+- name: Install NGINX on Ubuntu
+  hosts: webservers
+  become: yes  # Required to gain root privileges
+  tasks:
+    - name: Install NGINX on Ubuntu
+      apt:
+        name: nginx
+        state: latest
+        update_cache: yes
+
+    - name: Start and enable NGINX
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+        enabled: yes
