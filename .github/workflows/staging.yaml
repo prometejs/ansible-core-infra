@@ -22,6 +22,33 @@ jobs:
           python -m pip install --upgrade pip
           pip install ansible
 
+      - name: Configure SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          chmod 644 ~/.ssh/known_hosts
+      
+      - name: Run Host Setups
+        run: |
+          set -e
+          for playbook in ./playbooks/setups/*.yaml; do
+            if [ -f "$playbook" ]; then
+              echo "Running playbook $playbook with verbosity level 3"
+              ansible-playbook -i staging $playbook -vvv
+            else
+              echo "Skipping $playbook, not a file."
+            fi
+          done
+
       - name: Run Host Configurations
         run: |
-          echo "Helloworld"
+          set -e
+          for playbook in ./playbooks/configs/*.yaml; do
+            if [ -f "$playbook" ]; then
+              echo "Running playbook $playbook with verbosity level 3"
+              ansible-playbook -i staging $playbook -vvv
+            else
+              echo "Skipping $playbook, not a file."
+            fi
+          done
