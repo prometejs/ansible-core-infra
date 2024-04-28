@@ -1,18 +1,42 @@
 ---
 - name: Update NGINX configuration
+  gather_facts: true
   hosts: webservers
-  become: yes
+  become: true
   tasks:
-    - name: Copy new NGINX configuration file
+    - name: Remove default NGINX configuration file
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Copy new default NGINX configuration file
       ansible.builtin.copy:
         src: ../../files/nginx/*.conf
-        dest: /etc/nginx/
+        dest: /etc/nginx/sites-enabled/
         owner: root
         group: root
-        mode: '0644'
+        mode: '0600'
       notify:
         - restart nginx
 
+    # revisit
+    - name: Copy certificate
+      ansible.builtin.copy:
+        src: ../../files/certs/prometejs.
+        dest: /etc/ssl/
+        owner: root
+        group: root
+        mode: '0400'
+
+    # revisit
+    - name: Copy certificate key
+      ansible.builtin.copy:
+        src: ../../files/keys/
+        dest: /etc/ssl/
+        owner: root
+        group: root
+        mode: '0400'
+        
   handlers:
     - name: restart nginx
       ansible.builtin.service:
