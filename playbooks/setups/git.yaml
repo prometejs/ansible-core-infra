@@ -1,0 +1,16 @@
+---
+- name: Install/Upgrade Git
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Install Git on Debian/Ubuntu
+      ansible.builtin.apt:
+        name: git
+        state: latest
+      when: ansible_os_family == "Debian"
+
+    - name: Install Git on Red Hat/CentOS
+      ansible.builtin.yum:
+        name: git
+        state: latest
+      when: ansible_os_family == "RedHat"
