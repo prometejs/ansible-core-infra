@@ -1,0 +1,20 @@
+
+- name: Clone default site main branch
+  gather_facts: true
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /var/www/prometejs.ddns.net/
+        state: directory
+        mode: '0755'
+    
+    # revisit
+    - name: Clone default site main branch
+      ansible.builtin.git:
+        repo: https://github.com/Prometejs/site.git
+        dest: /var/www/prometejs.ddns.net/
+        single_branch: yes
+        version: main
+        # enable authentication
