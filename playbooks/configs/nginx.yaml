@@ -19,7 +19,7 @@
       notify:
         - restart nginx
 
-    - name: Copy certificate
+    - name: Copy certificates
       ansible.builtin.copy:
         src: ../../files/certs/
         dest: /etc/ssl/
