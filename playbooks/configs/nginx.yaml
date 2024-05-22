@@ -19,6 +19,12 @@
       notify:
         - restart nginx
 
+    - name: Create/Check nginx log path
+      ansible.builtin.file:
+        path: /var/logs/
+        state: directory
+        mode: '0755'
+
     - name: Create/Check ssl certificates directory
       ansible.builtin.file:
         path: /etc/ssl/
