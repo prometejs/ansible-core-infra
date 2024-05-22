@@ -19,10 +19,9 @@
       notify:
         - restart nginx
 
-    # revisit
     - name: Copy certificate
       ansible.builtin.copy:
-        src: ../../files/certs/prometejs_ddns_net.pem
+        src: ../../files/certs/
         dest: /etc/ssl/
         owner: root
         group: root
