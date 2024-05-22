@@ -19,6 +19,12 @@
       notify:
         - restart nginx
 
+    - name: Create/Check ssl certificates directory
+      ansible.builtin.file:
+        path: /etc/ssl/
+        state: directory
+        mode: '0755'
+
     - name: Copy certificates
       ansible.builtin.copy:
         src: ../../files/certs/
@@ -27,11 +33,17 @@
         group: root
         mode: '0400'
 
+    - name: Create/Check ssl certificate keys directory
+      ansible.builtin.file:
+        path: /etc/ssl/keys/
+        state: directory
+        mode: '0755'
+
     # revisit
-    - name: Copy certificate key
+    - name: Copy certificate keys
       ansible.builtin.copy:
         src: ../../files/keys/
-        dest: /etc/ssl/
+        dest: /etc/ssl/keys/
         owner: root
         group: root
         mode: '0400'
