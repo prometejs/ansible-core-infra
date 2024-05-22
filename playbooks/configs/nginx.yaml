@@ -22,7 +22,7 @@
     # revisit
     - name: Copy certificate
       ansible.builtin.copy:
-        src: ../../files/certs/prometejs.
+        src: ../../files/certs/prometejs_ddns_net.pem
         dest: /etc/ssl/
         owner: root
         group: root
