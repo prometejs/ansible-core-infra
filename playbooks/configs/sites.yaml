@@ -9,12 +9,23 @@
         path: /var/www/prometejs.ddns.net/
         state: directory
         mode: '0755'
-    
+
     # revisit
-    - name: Clone default site main branch
+    - name: Clone the Git repository to a temporary location
       ansible.builtin.git:
         repo: https://github.com/Prometejs/site.git
-        dest: /var/www/prometejs.ddns.net/
+        dest: '/tmp/site'
         single_branch: yes
-        version: main
+        version: 'main' 
         # enable authentication
+      register: git_clone
+    
+    - name: Copy specific directory from the cloned repo to the target location
+      command: cp -r /tmp/site/src/* /var/www/prometejs.ddns.net/
+      when: git_clone.changed
+
+    - name: Clean up temporary repository clone
+      file:
+        path: '/tmp/site'
+        state: absent
+      when: git_clone.changed
