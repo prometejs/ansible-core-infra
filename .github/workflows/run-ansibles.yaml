@@ -53,9 +53,10 @@ jobs:
       - name: Run Host Setups
         run: |
           set -e
+          echo "Environment: ${{ inputs.environment }}"
           for playbook in ./playbooks/setups/*.yaml; do
-            if [ -f "$playbook" ]; then
-              echo "Environment: ${{ inputs.environment }}\nRunning $playbook with verbosity level 3"
+            if [ -f "$playbook" ]; then  
+              echo "Running $playbook with verbosity level 3"
               ansible-playbook $playbook -vvv \
               --private-key ~/.ssh/id_rsa \
               --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
@@ -69,9 +70,10 @@ jobs:
       - name: Run Host Configurations
         run: |
           set -e
+          echo "Environment: ${{ inputs.environment }}"
           for playbook in ./playbooks/configs/*.yaml; do
             if [ -f "$playbook" ]; then
-              echo "Environment: ${{ inputs.environment }}\nRunning $playbook with verbosity level 3"
+              echo "Running $playbook with verbosity level 3"
               ansible-playbook $playbook -vvv \
               --private-key ~/.ssh/id_rsa \
               --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
