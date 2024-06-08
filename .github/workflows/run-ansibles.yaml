@@ -9,6 +9,7 @@ on:
         required: false
         default: '*'
         options:
+          - '*'
           - dev
           - prod
           - staging
@@ -18,6 +19,7 @@ on:
         default: '*'
         type: choice
         options:
+          - '*'
           - web_servers
           - master_site
           - worker_sites
