@@ -1,7 +1,22 @@
-name: deploy configs to development
+name: deploy configurations
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: Select environment
+        required: false
+        default: '*'
+      server-type:
+        description: 'Select specific server'
+        required: false
+        default: '*'
+        type: choice
+        options:
+          - web_servers
+          - master_site
+          - worker_sites
     branches:
       - main
 
@@ -35,8 +50,12 @@ jobs:
           set -e
           for playbook in ./playbooks/setups/*.yaml; do
             if [ -f "$playbook" ]; then
-              echo "Running playbook $playbook with verbosity level 3"
-              ansible-playbook -i development $playbook -vvv
+              echo "Environment: ${{ inputs.environment }}\nRunning $playbook with verbosity level 3"
+              ansible-playbook $playbook -vvv \
+              --private-key ~/.ssh/id_rsa \
+              --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
+              --become-password-file files/secrets/BECOME_PASSWORD_FILE.key \
+              ${{ inputs.environment }}:{{ server-type }}'
             else
               echo "Skipping $playbook, not a file."
             fi
@@ -47,8 +66,12 @@ jobs:
           set -e
           for playbook in ./playbooks/configs/*.yaml; do
             if [ -f "$playbook" ]; then
-              echo "Running playbook $playbook with verbosity level 3"
-              ansible-playbook -i development $playbook -vvv
+              echo "Environment: ${{ inputs.environment }}\nRunning $playbook with verbosity level 3"
+              ansible-playbook $playbook -vvv \
+              --private-key ~/.ssh/id_rsa \
+              --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
+              --become-password-file files/secrets/BECOME_PASSWORD_FILE.key \
+              ${{ inputs.environment }}:{{ server-type }}'
             else
               echo "Skipping $playbook, not a file."
             fi

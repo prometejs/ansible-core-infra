@@ -1,7 +1,7 @@
 ---
 - name: Update NGINX configuration
   gather_facts: true
-  hosts: webservers
+  hosts: web_servers
   become: true
   tasks:
     - name: Remove default NGINX configuration file
@@ -45,7 +45,6 @@
         state: directory
         mode: '0755'
 
-    # revisit
     - name: Copy certificate keys
       ansible.builtin.copy:
         src: ../../files/keys/

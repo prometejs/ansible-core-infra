@@ -1,6 +1,6 @@
 ---
 - name: Install/Upgrade Git
-  hosts: webservers
+  hosts: web_servers
   become: yes
   tasks:
     - name: Install Git on Debian/Ubuntu

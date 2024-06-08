@@ -1,8 +1,10 @@
 
 - name: Clone default site main branch
   gather_facts: true
-  hosts: webservers
+  hosts: web_servers
   become: true
+  vars:
+    deploy_key: ~/.ssh/id_rsa
   tasks:
     - name: Create/Check clone directory exist
       ansible.builtin.file:
@@ -10,14 +12,13 @@
         state: directory
         mode: '0755'
 
-    # revisit
     - name: Clone the Git repository to a temporary location
       ansible.builtin.git:
-        repo: https://github.com/Prometejs/site.git
+        repo: git@github.com:Prometejs/ansibles.git
         dest: '/tmp/site'
         single_branch: yes
         version: 'main' 
-        # enable authentication
+        key_file: "{{ deploy_key }}"
       register: git_clone
     
     - name: Copy specific directory from the cloned repo to the target location

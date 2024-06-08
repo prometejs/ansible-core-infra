@@ -1,6 +1,6 @@
 ---
 - name: Install NGINX on Ubuntu
-  hosts: webservers
+  hosts: web_servers
   become: yes  # Required to gain root privileges
   tasks:
     - name: Install NGINX on Ubuntu

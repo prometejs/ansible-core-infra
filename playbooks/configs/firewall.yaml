@@ -1,6 +1,6 @@
 ---
 - name: Configure firewalld
-  hosts: webservers
+  hosts: web_servers
   become: yes
   tasks:
     - name: Install firewalld on RedHat family
