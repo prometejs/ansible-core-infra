@@ -52,7 +52,7 @@ jobs:
 
       - name: Configure vault key
         run: |
-          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
+          echo ${{ secrets.VAULT_KEY }} > ~/.vault-key.txt
           chmod 600 ~/.vault-key.txt
 
       - name: Run Host Setups
