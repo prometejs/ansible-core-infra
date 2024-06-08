@@ -60,7 +60,7 @@ jobs:
               --private-key ~/.ssh/id_rsa \
               --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
               --become-password-file files/secrets/BECOME_PASSWORD_FILE.key \
-              ${{ inputs.environment }}:{{ server-type }}'
+              '${{ inputs.environment }}:{{ inputs.server-type }}'
             else
               echo "Skipping $playbook, not a file."
             fi
@@ -76,7 +76,7 @@ jobs:
               --private-key ~/.ssh/id_rsa \
               --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
               --become-password-file files/secrets/BECOME_PASSWORD_FILE.key \
-              ${{ inputs.environment }}:{{ server-type }}'
+              '${{ inputs.environment }}:{{ inputs.server-type }}'
             else
               echo "Skipping $playbook, not a file."
             fi
