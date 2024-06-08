@@ -8,6 +8,10 @@ on:
         description: Select environment
         required: false
         default: '*'
+        options:
+          - dev
+          - prod
+          - staging
       server-type:
         description: 'Select specific server'
         required: false
