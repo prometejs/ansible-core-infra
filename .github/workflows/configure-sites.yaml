@@ -48,6 +48,11 @@ jobs:
         run: |
           echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
           chmod 600 ~/.vault-key.txt
+
+      - name: Test connectivity to Ubuntu server
+        run: |
+          ping -c 4 ubuntu_server_ip
+          nc -zv ubuntu_server_ip 22
       
       - name: Add SSH fingerprint and configure known hosts
         run: |
