@@ -44,6 +44,11 @@ jobs:
           pip install ansible
           ansible-galaxy collection install community.general
 
+      - name: Configure Runner Vault Key
+        run: |
+          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
+          chmod 600 ~/.vault-key.txt
+
       - name: Bootstrap Servers
         run: |
           set -e
