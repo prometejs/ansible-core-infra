@@ -1,4 +1,4 @@
-name: user configurations
+name: bootstrap sites
 
 on:
   workflow_dispatch:
