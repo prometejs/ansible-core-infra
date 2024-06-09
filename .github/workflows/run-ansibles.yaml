@@ -32,6 +32,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
+      - name: Remove host_vars files
+        run: |
+          echo "Removing host_vars as it takes precedence over ansible.cfg because user for this file is set in ansible.cfg"
+          rm -rf host_vars/
 
       - name: Install Python
         uses: actions/setup-python@v4
@@ -44,28 +49,32 @@ jobs:
           pip install ansible
           ansible-galaxy collection install community.general
 
-      - name: Configure SSH key
+      - name: Configure Runner SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ansible
+          chmod 600 ~/.ssh/ansible
 
-      - name: Configure vault key
+      - name: Configure Runner Vault Key
         run: |
           echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
           chmod 600 ~/.vault-key.txt
+
+      - name: Configure Runner Deploy Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/github-deploy-key
+          # chmod 600 ~/.ssh/github-deploy-key
 
       - name: Run Host Setups
         run: |
           set -e
           echo "Environment: ${{ inputs.environment }}"
-          for playbook in ./playbooks/setups/*.yaml; do
+          for playbook in ./playbooks/setups/*.yaml ./playbooks/configs/*.yml; do
             if [ -f "$playbook" ]; then  
               echo "Running $playbook with verbosity level 3"
               ansible-playbook $playbook -vvv \
-              --private-key ~/.ssh/id_rsa \
-              --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
-              --become-password-file files/secrets/BECOME_PASSWORD_FILE.key \
+              --private-key ~/.ssh/ansible \
               --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
             else
               echo "Skipping $playbook, not a file."
@@ -76,13 +85,11 @@ jobs:
         run: |
           set -e
           echo "Environment: ${{ inputs.environment }}"
-          for playbook in ./playbooks/configs/*.yaml; do
+          for playbook in ./playbooks/configs/*.yaml ./playbooks/configs/*.yml; do
             if [ -f "$playbook" ]; then
               echo "Running $playbook with verbosity level 3"
               ansible-playbook $playbook -vvv \
-              --private-key ~/.ssh/id_rsa \
-              --connection-password-file files/secrets/CONNECTION_PASSWORD_FILE.key \
-              --become-password-file files/secrets/BECOME_PASSWORD_FILE.key \
+              --private-key ~/.ssh/ansible \
               --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
             else
               echo "Skipping $playbook, not a file."

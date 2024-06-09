@@ -4,7 +4,7 @@
   hosts: web_servers
   become: true
   vars:
-    deploy_key: ~/.ssh/id_rsa
+    deploy_key: ~/.ssh/ansible
   tasks:
     - name: Create/Check clone directory exist
       ansible.builtin.file:
