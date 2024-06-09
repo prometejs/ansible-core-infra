@@ -16,12 +16,12 @@
         update_cache: yes
       when: ansible_os_family == "Debian"
 
-   - name: Install UFW on Ubuntu # fireqall
-      apt:
-        name: ufw
-        state: present
-        update_cache: yes
-      when: ansible_os_family == "Debian"
+    - name: Install UFW on Ubuntu # firewall
+        apt:
+          name: ufw
+          state: present
+          update_cache: yes
+        when: ansible_os_family == "Debian"
 
     - name: Install firewalld on CentOS
       yum:
