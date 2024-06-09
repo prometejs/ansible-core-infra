@@ -4,7 +4,7 @@
   hosts: web_servers
   become: true
   vars:
-    deploy_key: ~/.ssh/ansible
+    deploy_key: ~/.ssh/github-deploy-key
   tasks:
     - name: Create/Check clone directory exist
       ansible.builtin.file:
@@ -14,7 +14,7 @@
 
     - name: Clone the Git repository to a temporary location
       ansible.builtin.git:
-        repo: git@github.com:Prometejs/ansibles.git
+        repo: git@github.com:Prometejs/website.git
         dest: '/tmp/site'
         single_branch: yes
         version: 'main' 
