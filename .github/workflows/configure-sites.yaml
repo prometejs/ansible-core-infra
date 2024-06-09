@@ -48,6 +48,11 @@ jobs:
         run: |
           echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
           chmod 600 ~/.vault-key.txt
+      
+      - name: Add SSH fingerprint and configure known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H prometejs.ddns.net >> ~/.ssh/known_hosts
 
       - name: Bootstrap Servers
         run: |
