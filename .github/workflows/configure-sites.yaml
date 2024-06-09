@@ -54,7 +54,7 @@ jobs:
           set -e
           echo "Environment: ${{ inputs.environment }}"
           echo "Servers: ${{ inputs.server-type }}"
-          ansible-playbook playbooks/sites/bootsrap.yaml -vvv --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
+          ansible-playbook playbooks/sites/bootstrap.yaml -vvv --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
 
       - name: Add Users
         run: |
