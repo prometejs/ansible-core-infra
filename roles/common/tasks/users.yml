@@ -1,0 +1,19 @@
+- name: Create Ansible User
+  user:
+    name: "{{ user.name }}"
+    groups: "{{ user.groups | default(None) }}"
+
+- name: Add SSH Key
+  authorized_key:
+    user: "{{ user.name }}"
+    key: "{{ user.pub_key }}"
+  when: user.pub_key is defined
+      
+- name: add sudoers file
+  copy:
+    src: "{{ user.sudoers.src }}"
+    dest: "{{ user.sudoers.dest }}"
+    owner: "{{ user.sudoers.owner | default(None) }}"
+    group: "{{ user.sudoers.group | default(None) }}"
+    mode: "{{ user.sudoers.mode | default(None) }}"
+  when: user.sudoers.src is defined and user.sudoers.dest is defined

@@ -1,0 +1,19 @@
+# # # # # # # # # 
+# Site Configs ##
+# # # # # # # ### 
+
+- hosts: all
+  roles:
+    - common
+
+- hosts: all
+  tasks:
+    - name: Register All Hosts Fingerprint As Trusted Known Hosts
+      local_action: ansible.builtin.shell echo $(whoami)
+
+# - hosts: web_servers
+#   become: true
+#   roles:
+#     - web
+#  main.yaml /Users/elvissegbawu/Developer/Prometejs/ansibles/init.sh
+# run specific task in role to create user/ do this as root

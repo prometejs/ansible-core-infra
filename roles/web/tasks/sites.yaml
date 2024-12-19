@@ -1,0 +1,48 @@
+- name: Remove Default Site Config
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Copy Site Config
+  ansible.builtin.copy:
+    src: files/nginx/*.conf
+    dest: /etc/nginx/sites-enabled/
+    owner: root
+    group: root
+    mode: '0600'
+  notify:
+    - Restart Web Server
+
+# - name: Create/Check nginx log path
+#   ansible.builtin.file:
+#     path: /var/logs/
+#     state: directory
+#     mode: '0755'
+
+# - name: Create/Check ssl certificates directory
+#   ansible.builtin.file:
+#     path: /etc/ssl/
+#     state: directory
+#     mode: '0755'
+
+# - name: Copy certificates
+#   ansible.builtin.copy:
+#     src: ../../files/certs/
+#     dest: /etc/ssl/
+#     owner: root
+#     group: root
+#     mode: '0400'
+
+# - name: Create/Check ssl certificate keys directory
+#   ansible.builtin.file:
+#     path: /etc/ssl/keys/
+#     state: directory
+#     mode: '0755'
+
+# - name: Copy certificate keys
+#   ansible.builtin.copy:
+#     src: ../../files/keys/
+#     dest: /etc/ssl/keys/
+#     owner: root
+#     group: root
+#     mode: '0400'

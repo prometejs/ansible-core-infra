@@ -1,0 +1,12 @@
+# # # # # # # # #  
+# Init Scripts ## 
+# # # # # # # ### 
+
+- hosts: workstation
+  tasks:
+    - name: Register All Hosts Fingerprint As Trusted Known Hosts
+      local_action: ansible.builtin.shell ./init.sh {{ host }}
+      loop: "{{ groups['all'] }}"
+      loop_control:
+        loop_var: host
+      when: run_init

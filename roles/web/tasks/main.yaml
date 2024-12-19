@@ -1,0 +1,5 @@
+- name: Install Web Server
+  include_tasks: nginx.yaml
+
+- name: Deploy Default Site
+  include_tasks: sites.yaml

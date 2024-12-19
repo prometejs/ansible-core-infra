@@ -1,0 +1,20 @@
+# - name: Send Email
+#   mail:
+#     host: sandbox.smtp.mailtrap.io
+#     username: {{ mail_username }}
+#     password: {{ mail_password }}
+#     port: {{ mail_port }}
+#     subject: Ansible Report
+#     body: |
+#       Ansible run report below
+#       {{  }}
+#     from: {{ mail_sender }}
+#     to: {{ mail_receipients}}
+
+# - name: Reload Firewalld
+#   firewalld:
+#     state: reloaded
+
+# - name: Reload UFW
+#   ufw:
+#     state: reloaded

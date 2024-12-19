@@ -1,0 +1,3 @@
+ansible_connection: local
+run_init: true
+ansible_become_password: changeme # for initial setup and config

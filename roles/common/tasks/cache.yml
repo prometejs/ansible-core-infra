@@ -1,0 +1,11 @@
+- name: Update Repository Cache
+  dnf:
+    update_only: yes
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Update Repository Cache
+  apt:
+    upgrade: dist
+    update_cache: yes
+  when: ansible_os_family == "Debian"
