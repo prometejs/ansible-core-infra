@@ -17,12 +17,12 @@ echo "[$host]: Adding public key as authorised hosts"
 $sshpass_command ssh-copy-id -i "${ssh_key_path}.pub" $host 2>&1
    
 echo "[$host]: Configure user > $ansible_user"
-$sshpass_command ssh -q -t "$host" << EOF
+$sshpass_command ssh -q "$host" << EOF
 [[ -z '$(id "$ansible_user")' ]] && \
 echo $host_pass | sudo -S useradd -m $ansible_user && \
 echo "[$host]: User created." || \
-echo "[$host]: Skipping...user exists."
-EOF
+echo "[$host]: Skipping...user exists.";
 
-# echo $host_pass | sudo -S echo -n "$ansible_user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$ansible_user && \
-# echo "[$host]: Sudoer configured."
+echo $host_pass | sudo -S sh -c "echo '$ansible_user ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$ansible_user" && \
+echo "[$host]: User configured." || echo "[$host]: User configuration failed."
+EOF
