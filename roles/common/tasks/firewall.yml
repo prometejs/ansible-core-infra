@@ -1,19 +1,34 @@
-- name: Install Firewall (UFW)
+- name: Install Ubuntu Firewall
   apt:
     name: ufw
     state: "latest"
     update_cache: yes
 
-- name: Start and enable UFW on Ubuntu
+- name: Start Ubuntu Firewall
   service:
     name: ufw
     state: started
     enabled: yes
 
-- name: Allow SSH through UFW on Ubuntu
+- name: Allow SSH Traffic for Ubuntu Firewall
   ufw:
     rule: allow
     name: OpenSSH
+  notify: Reload Ubuntu Firewall
+
+- name: Allow HTTP Traffic for Ubuntu Firewall
+  ufw:
+    rule: allow
+    port: '80'
+  notify: Reload Ubuntu Firewall
+
+- name: Allow HTTPS Traffic for Ubuntu Firewall
+  ufw:
+    rule: allow
+    port: '443'
+  notify: Reload Ubuntu Firewall
+
+
 
   # when: ansible_os_family == "Debian"
 
@@ -24,55 +39,41 @@
     #     enabled: yes
     #   when: ansible_os_family == "RedHat"
 
-- name: Allow SSH through UFW on Ubuntu
-  ufw:
-    rule: allow
-    name: OpenSSH
+
   # when: ansible_os_family == "Debian"
 
-- name: Allow SSH through firewalld on CentOS
-  firewalld:
-    service: ssh
-    permanent: yes
-    state: enabled
-    immediate: yes
+# - name: Allow SSH through firewalld on CentOS
+#   firewalld:
+#     service: ssh
+#     permanent: yes
+#     state: enabled
+#     immediate: yes
   # when: ansible_os_family == "RedHat"
 
-- name: Allow HTTP through UFW on Ubuntu
-  ufw:
-    rule: allow
-    port: '80'
-  when: ansible_os_family == "Debian"
 
-- name: Allow HTTP through firewalld on CentOS
-  firewalld:
-    port: 80/tcp
-    permanent: yes
-    state: enabled
-    immediate: yes
-  when: ansible_os_family == "RedHat"
+#   when: ansible_os_family == "Debian"
 
-- name: Allow HTTPS through UFW on Ubuntu
-  ufw:
-    rule: allow
-    port: '443'
-  when: ansible_os_family == "Debian"
+# - name: Allow HTTP through firewalld on CentOS
+#   firewalld:
+#     port: 80/tcp
+#     permanent: yes
+#     state: enabled
+#     immediate: yes
+#   when: ansible_os_family == "RedHat"
 
-- name: Allow HTTPS through firewalld on CentOS
-  firewalld:
-    port: 443/tcp
-    permanent: yes
-    state: enabled
-    immediate: yes
-  when: ansible_os_family == "RedHat"
+
+  # when: ansible_os_family == "Debian"
+
+# - name: Allow HTTPS through firewalld on CentOS
+#   firewalld:
+#     port: 443/tcp
+#     permanent: yes
+#     state: enabled
+#     immediate: yes
+#   when: ansible_os_family == "RedHat"
 
 - name: Enable UFW on Ubuntu
   ufw:
     state: enabled
     default: deny
   when: ansible_os_family == "Debian"
-
-- name: Reload firewalld on CentOS
-  firewalld:
-    state: reloaded
-  when: ansible_os_family == "RedHat"

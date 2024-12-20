@@ -1,6 +1,6 @@
-# - name: Update Cache
-#   include_tasks: cache.yml
-#   register: cache
+- name: Update Cache
+  include_tasks: cache.yml
+  register: cache
 
 - name: Configure Ansible User
   include_tasks: users.yml
@@ -9,9 +9,9 @@
     loop_var: user
   register: user
 
-# - name: Configure Firewall
-#   include_tasks: firewall.yml
-#   register: firewall
+- name: Configure Firewall
+  include_tasks: firewall.yml
+  register: firewall
 
 # - name: Print the gateway for each host when defined
 #   ansible.builtin.debug:

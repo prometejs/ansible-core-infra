@@ -11,10 +11,6 @@
 #     from: {{ mail_sender }}
 #     to: {{ mail_receipients}}
 
-# - name: Reload Firewalld
-#   firewalld:
-#     state: reloaded
-
-# - name: Reload UFW
-#   ufw:
-#     state: reloaded
+- name: Reload Ubuntu Firewall
+  ufw:
+    state: reloaded

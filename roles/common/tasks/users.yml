@@ -9,7 +9,7 @@
     key: "{{ user.pub_key }}"
   when: user.pub_key is defined
       
-- name: add sudoers file
+- name: Add Sudoers File
   copy:
     src: "{{ user.sudoers.src }}"
     dest: "{{ user.sudoers.dest }}"
