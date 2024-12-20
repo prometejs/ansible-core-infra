@@ -1,11 +1,16 @@
-- name: Install NGINX on Ubuntu
-  apt:
+- name: Install NGINX
+  package:
     name: nginx
     state: latest
     update_cache: yes
 
 - name: Start and enable NGINX
-  ansible.builtin.systemd:
+  service:
     name: nginx
     state: started
     enabled: yes
+
+- name: Remove Default Site Config
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent

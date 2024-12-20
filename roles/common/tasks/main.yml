@@ -17,9 +17,12 @@
   include_tasks: git.yml
   register: git
 
-# # # # # # # # # # # #
-# Reporting Configs ###
-# # # # # # # # # ##### 
-
-- name: Report Progress
-  include_tasks: report.yml
+# Run last
+- name: Create Report Registry
+  include_tasks: registry.yml
+  vars:
+    role_registry: 
+      - "{{ git }}"
+      - "{{ user }}" 
+      - "{{ firewall }}"
+      - "{{ cache }}"

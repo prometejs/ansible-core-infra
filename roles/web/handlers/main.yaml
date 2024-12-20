@@ -1,5 +1,5 @@
-- name: Restart Web Server
-  ansible.builtin.service:
+- name: restart_nginx
+  service:
     name: nginx
     state: restarted
     daemon_reload: yes

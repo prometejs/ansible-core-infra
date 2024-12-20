@@ -1,5 +1,17 @@
 - name: Install Web Server
-  include_tasks: nginx.yaml
+  include_tasks: nginx.yml
+  register: nginx
 
-- name: Deploy Default Site
-  include_tasks: sites.yaml
+- name: Deploy Prometejs Site
+  include_tasks: prometejs.yml
+  register: prometejs
+
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ nginx }}"
+      - "{{ prometejs }}"

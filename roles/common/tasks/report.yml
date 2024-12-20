@@ -1,12 +1,9 @@
 - name: Create Report
   set_fact:
     report: |
-        [{{ inventory_hostname }}]----{{  report | default("") + item | string + '\n' }}
-  loop:   
-    - "{{ cache }}"
-    - "{{ user }}" 
-    - "{{ firewall }}"
-    - "{{ git }}"
+        {{  report | default("Execution Summary
+        ") + '++' + item | string }}
+  loop: "{{ registry }}"
 
 - name: Trigger Handler For Report
   command: /bin/true

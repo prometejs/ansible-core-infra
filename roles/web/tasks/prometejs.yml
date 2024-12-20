@@ -1,17 +1,12 @@
-- name: Remove Default Site Config
-  ansible.builtin.file:
-    path: /etc/nginx/sites-enabled/default
-    state: absent
-
-- name: Copy Site Config
-  ansible.builtin.copy:
-    src: files/nginx/*.conf
-    dest: /etc/nginx/sites-enabled/
-    owner: root
-    group: root
-    mode: '0600'
-  notify:
-    - Restart Web Server
+# - name: Copy Site Config
+#   ansible.builtin.copy:
+#     src: files/nginx/*.conf
+#     dest: /etc/nginx/sites-enabled/
+#     owner: root
+#     group: root
+#     mode: '0600'
+#   notify:
+#     - Restart Web Server
 
 # - name: Create/Check nginx log path
 #   ansible.builtin.file:

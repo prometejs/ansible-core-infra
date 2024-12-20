@@ -1,0 +1,3 @@
+- set_fact:
+    registry: "{{ registry | default([]) + [item] }}"
+  loop: "{{ role_registry }}"
