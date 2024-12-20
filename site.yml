@@ -6,12 +6,10 @@
   become: true
   roles:
     - common
-  # handlers:
-  #   - include_tasks: roles/common/handlers/main.yml
 
-# - hosts: web_servers
-#   become: true
-#   roles:
-#     - web
-#  main.yaml /Users/elvissegbawu/Developer/Prometejs/ansibles/init.sh
-# run specific task in role to create user/ do this as root
+- hosts: web_servers
+  become: true
+  roles:
+    - web
+  handlers:
+    - include_tasks: roles/common/handlers/main.yml
