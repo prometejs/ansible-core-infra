@@ -13,29 +13,9 @@
   include_tasks: firewall.yml
   register: firewall
 
-# - name: Print the gateway for each host when defined
-#   ansible.builtin.debug:
-#     msg: System {{ inventory_hostname }} has gateway {{ ansible_default_ipv4.gateway }}
+# # # # # # # # # # # #
+# Reporting Configs ###
+# # # # # # # # # ##### 
 
-# - name: Send Report
-#   set_fact:
-#     report: |
-#       Common Role
-#       -----------
-#       {{ 
-#         report | 
-#         stderr: map(attribute='stdout') + '\n' + 
-#         stdout: map(attribute='stdout') + '\n' +
-#         rc: map(attribute='stdout') + '\n' + 
-#         '***************************************'
-#       }}
-#   loop: 
-#     - {{ cache }}
-#     - {{ user }}   
-#     - {{ firewall }}
-#   loop_control:
-#     loop_var: report
-#   notify: Send Email
-  # run_once: true
-  # add in what hosts the tasks were run on
-  # add register name
+- name: Report Progress
+  include_tasks: report.yml

@@ -6,6 +6,8 @@
   become: true
   roles:
     - common
+  # handlers:
+  #   - include_tasks: roles/common/handlers/main.yml
 
 # - hosts: web_servers
 #   become: true

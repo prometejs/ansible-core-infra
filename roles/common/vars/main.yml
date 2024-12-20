@@ -12,8 +12,3 @@ users:
   - name: apollo
     groups: 
       - root
-  - name: athena
-  - name: zues
-
-  
-

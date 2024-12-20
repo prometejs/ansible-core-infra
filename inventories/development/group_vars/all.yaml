@@ -1,1 +1,9 @@
-Taset: sdsd
+mail_port: "2525"
+mail_host: "sandbox.smtp.mailtrap.io"
+mail_username: "a9f521690f65a4"
+mail_password: "11480b2eec8121"
+mail_sender: "admin@mail.com"
+mail_receipients: "admin@mail.com"
+
+# From: Magic Elves <from@example.com>
+# 10To: Mailtrap Inbox <to@example.com>
