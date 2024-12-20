@@ -1,7 +1,6 @@
 admin_mail: elvissegbawu@gmail.com
 users:
   - name: hermes
-    pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOUuJHSylToQckXxKAU2atbtWDUcATKdoh6GckONzcM ansible ssh [hermes]" # lookup('file', 'hermes.pub')"
     groups: 
       - root
     sudoers:

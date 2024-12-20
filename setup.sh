@@ -15,7 +15,11 @@ echo "[$host]: Generating SSH key pair"
 
 echo "[$host]: Adding public key as authorised hosts"
 $sshpass_command ssh-copy-id -i "${ssh_key_path}.pub" $host 2>&1
-   
+
+pub_key=$(cat "${ssh_key_path}.pub")
+ansible_user_home=$(eval echo ~$ansible_user)
+ansible_user_auth_keys="$ansible_user_home/.ssh/authorized_keys"
+
 echo "[$host]: Configure user > $ansible_user"
 $sshpass_command ssh -q "$host" << EOF
 [[ -z '$(id "$ansible_user")' ]] && \
@@ -24,5 +28,8 @@ echo "[$host]: User created." || \
 echo "[$host]: Skipping...user exists.";
 
 echo $host_pass | sudo -S sh -c "echo '$ansible_user ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$ansible_user" && \
-echo "[$host]: User configured." || echo "[$host]: User configuration failed."
+echo "[$host]: Sudoer configured." || echo "[$host]: Sudoer configuration failed."
+
+echo $host_pass | sudo -S sh -c "grep -qxF '$pub_key' $ansible_user_auth_keys || echo '$pub_key' >> $ansible_user_auth_keys" && \
+echo "[$host]: Key configured." || echo "[$host]: Key configuration failed."
 EOF
