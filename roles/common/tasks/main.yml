@@ -13,6 +13,10 @@
   include_tasks: firewall.yml
   register: firewall
 
+- name: Configure Git
+  include_tasks: git.yml
+  register: git
+
 # # # # # # # # # # # #
 # Reporting Configs ###
 # # # # # # # # # ##### 

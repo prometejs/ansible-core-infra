@@ -6,6 +6,7 @@
     - "{{ cache }}"
     - "{{ user }}" 
     - "{{ firewall }}"
+    - "{{ git }}"
 
 - name: Trigger Handler For Report
   command: /bin/true

@@ -1,0 +1,11 @@
+- name: Install Git on Debian/Ubuntu
+  package:
+    name: git
+    state: latest
+
+# ---
+# - name: Install/Upgrade Git
+#   hosts: web_servers
+#   become: yes
+#   tasks:
+    
