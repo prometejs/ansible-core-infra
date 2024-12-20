@@ -7,11 +7,6 @@
   roles:
     - common
 
-- hosts: all
-  tasks:
-    - name: Register All Hosts Fingerprint As Trusted Known Hosts
-      local_action: ansible.builtin.shell echo $(whoami)
-
 # - hosts: web_servers
 #   become: true
 #   roles:
