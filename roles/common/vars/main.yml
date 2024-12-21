@@ -12,3 +12,7 @@ users:
   - name: apollo
     groups: 
       - root
+nameservers:
+  - "8.8.8.8"
+  - "8.8.4.4"
+  - "1.1.1.1"
