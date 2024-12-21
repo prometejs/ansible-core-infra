@@ -1,14 +1,13 @@
 - name: Copy Prometejs Deploy Key
   ansible.builtin.copy:
     src: files/prometejs/deploy.key
-    dest: ~/.ssh/prometejs.deploy
+    dest: /home/{{ ansible_user }}/.ssh/prometejs.deploy
+    owner: "{{ ansible_user }}"
     mode: '0400'
 
 - name: Clone Prometejs Project 
   ansible.builtin.git:
-    repo: git://github.com/Prometejs/website.git
+    repo: git@github.com:Prometejs/website.git
     dest: /var/www/prometejs.ddns.net/
     version: v1.0.0
-    update: yes
-    clone: yes
-    key_file: ~/.ssh/prometejs.deploy
+    key_file: "/home/{{ ansible_user }}/.ssh/prometejs.deploy"
