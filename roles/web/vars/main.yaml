@@ -1,0 +1,4 @@
+ssl_private_path: /etc/ssl/private/
+ssl_certs_path: /etc/ssl/private/
+sites_available_path: /etc/nginx/sites-available/
+sites_enabled_path: /etc/nginx/sites-enabled/

@@ -1,0 +1,7 @@
+- name: Copy SSl Certs
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.path }}"
+    owner: "{{ item.owner | default(None) }}"
+    group: "{{ item.owner | default(None) }}"
+    mode: "{{ item.mode | default(None) }}"

@@ -17,14 +17,14 @@
     path: "{{ item }}"
     state: directory
   loop:
-    - /etc/nginx/sites-enabled/
-    - /etc/nginx/sites-available/
+    - "{{ sites_enabled_path }}"
+    - "{{ sites_available_path }}"
 
 - name: Add Site Directory to Nginx Config
   lineinfile:
     path: /etc/nginx/nginx.conf
     regexp: '(\s+)?include\s+(\/etc\/nginx\/conf.d|\/etc\/nginx\/sites-enabled)'
-    line: 'include /etc/nginx/sites-enabled/*.conf;'
+    line: 'include {{ sites_enabled_path }}/*.conf;'
     state: present
     
 - name: Start and enable NGINX
@@ -32,3 +32,4 @@
     name: nginx
     state: started
     enabled: yes
+  ignore_errors: True
