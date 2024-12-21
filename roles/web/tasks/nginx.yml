@@ -4,13 +4,31 @@
     state: latest
     update_cache: yes
 
+- name: Remove Default Site Configs
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/nginx/conf.d/default.conf
+    - /etc/nginx/conf.d/
+
+- name: Create Sites Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /etc/nginx/sites-enabled/
+    - /etc/nginx/sites-available/
+
+- name: Add Site Directory to Nginx Config
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: '(\s+)?include\s+(\/etc\/nginx\/conf.d|\/etc\/nginx\/sites-enabled)'
+    line: 'include /etc/nginx/sites-enabled/*.conf;'
+    state: present
+    
 - name: Start and enable NGINX
   service:
     name: nginx
     state: started
     enabled: yes
-
-- name: Remove Default Site Config
-  file:
-    path: /etc/nginx/sites-enabled/default
-    state: absent
