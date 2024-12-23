@@ -25,7 +25,7 @@
   loop:
     - name: prometejs
       src: files/prometejs/prometejs.conf
-      enabled: False
+      enabled: True
 
 # Run last
 - name: Create Report Registry

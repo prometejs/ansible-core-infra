@@ -3,13 +3,16 @@
     src: "{{ item.src }}"
     dest: "{{ sites_available_path }}"
     owner: "{{ item.owner | default('www-data') }}"
-    mode: "{{ item.mode | default('0400') }}"
+    mode: "{{ item.mode | default('0444') }}"
+    group: "{{ item.group | default('www-data') }}"
 
 - name: Configure Enabled Sites
   ansible.builtin.file:
     src: "{{ sites_available_path + '/' + item.name + '.conf' if item.enabled else None }}"
     dest: "{{ sites_enabled_path }}/{{ item.name }}.conf"
     owner: "{{ item.owner | default('www-data') }}"
+    mode: "{{ item.mode | default('0444') }}"
+    group: "{{ item.group | default('www-data') }}"
     state: "{{ 'link' if item.enabled else 'absent' }}"
   notify:
     - restart_nginx

@@ -7,7 +7,16 @@
 
 - name: Clone Prometejs Project 
   ansible.builtin.git:
+    key_file: "/home/{{ ansible_user }}/.ssh/prometejs.deploy"   
     repo: git@github.com:Prometejs/website.git
     dest: /var/www/prometejs.ddns.net/
-    version: v1.0.0
-    key_file: "/home/{{ ansible_user }}/.ssh/prometejs.deploy"
+    version: v1.0.1
+    force: true
+
+- name: Clean/Prepare Project Files
+  ansible.builtin.shell: |
+    ls -d {{ dest }}/* | grep -v '/src$' | xargs rm -rf && \
+    mv {{ dest }}/src/* /{{ dest }} && \
+    rm -r {{ dest }}/src
+  vars:
+    dest: /var/www/prometejs.ddns.net/
