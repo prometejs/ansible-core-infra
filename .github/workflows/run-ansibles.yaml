@@ -20,7 +20,7 @@ on:
         type: choice
         options:
           - '*'
-          - web_servers
+          - web_server
           - master_site
           - worker_sites
     branches:

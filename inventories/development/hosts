@@ -1,8 +1,12 @@
-10.0.2.4
-10.0.2.5
-
 [workstation]
 10.0.2.3
 
-[web_servers]
+[web_server]
 10.0.2.3
+
+[control_node]
+10.0.2.3
+
+[worker_node]
+10.0.2.4
+10.0.2.5
