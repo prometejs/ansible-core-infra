@@ -14,3 +14,8 @@
 - name: reload_ubuntu_firewall
   ufw:
     state: reloaded
+
+- name: reload_systemd_resolved
+  systemd_service:
+    name: systemd-resolved.service
+    state: reloaded

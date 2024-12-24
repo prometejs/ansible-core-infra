@@ -1,0 +1,6 @@
+ssl_private_path: /etc/ssl/sites/private/
+ssl_certs_path: /etc/ssl/sites/certs/
+sites_available_path: /etc/nginx/sites-available/
+sites_enabled_path: /etc/nginx/sites-enabled/
+worker_connections: '1024'
+nginx_user: www-data

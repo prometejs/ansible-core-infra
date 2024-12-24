@@ -17,11 +17,16 @@
   include_tasks: git.yml
   register: git
 
+- name: Configure DNS Name Servers
+  include_tasks: dns.yml
+  register: dns
+
 # Run last
 - name: Create Report Registry
   include_tasks: registry.yml
   vars:
     role_registry: 
+      - "{{ dns }}"
       - "{{ git }}"
       - "{{ user }}" 
       - "{{ firewall }}"

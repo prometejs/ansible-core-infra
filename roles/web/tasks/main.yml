@@ -1,10 +1,31 @@
 - name: Install Web Server
   include_tasks: nginx.yml
-  register: nginx
+  register: nginx  
 
-- name: Deploy Prometejs Site
+- name: Configure Sites SSL
+  include_tasks: ssl.yml
+  register: ssl
+  loop:
+    - src: files/prometejs/prometejs.key
+      path: "{{ssl_private_path}}"
+      owner: www-data
+      mode: '0400'
+    - src: files/prometejs/prometejs.pem
+      path: "{{ssl_certs_path}}"
+      owner: www-data
+      mode: '0444'
+
+- name: Set Up Prometejs
   include_tasks: prometejs.yml
   register: prometejs
+
+- name: Deploy Site Nginx Configs
+  include_tasks: sites.yml
+  register: sites
+  loop:
+    - name: prometejs
+      src: files/prometejs/prometejs.conf
+      enabled: True
 
 # Run last
 - name: Create Report Registry
@@ -14,4 +35,6 @@
   vars:
     role_registry: 
       - "{{ nginx }}"
+      - "{{ ssl }}"
       - "{{ prometejs }}"
+      - "{{ sites }}" 

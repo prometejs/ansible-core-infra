@@ -1,0 +1,6 @@
+- name: Verify DNS config exist
+  lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: "^#.*DNS="
+    line: "DNS={{ nameservers | default([]) | join(' ') }}"
+    state: present    

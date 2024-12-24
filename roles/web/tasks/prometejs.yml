@@ -1,43 +1,22 @@
-# - name: Copy Site Config
-#   ansible.builtin.copy:
-#     src: files/nginx/*.conf
-#     dest: /etc/nginx/sites-enabled/
-#     owner: root
-#     group: root
-#     mode: '0600'
-#   notify:
-#     - Restart Web Server
+- name: Copy Prometejs Deploy Key
+  ansible.builtin.copy:
+    src: files/prometejs/deploy.key
+    dest: /home/{{ ansible_user }}/.ssh/prometejs.deploy
+    owner: "{{ ansible_user }}"
+    mode: '0400'
 
-# - name: Create/Check nginx log path
-#   ansible.builtin.file:
-#     path: /var/logs/
-#     state: directory
-#     mode: '0755'
+- name: Clone Prometejs Project 
+  ansible.builtin.git:
+    key_file: "/home/{{ ansible_user }}/.ssh/prometejs.deploy"   
+    repo: git@github.com:Prometejs/website.git
+    dest: /var/www/prometejs.ddns.net/
+    version: v1.0.1
+    force: true
 
-# - name: Create/Check ssl certificates directory
-#   ansible.builtin.file:
-#     path: /etc/ssl/
-#     state: directory
-#     mode: '0755'
-
-# - name: Copy certificates
-#   ansible.builtin.copy:
-#     src: ../../files/certs/
-#     dest: /etc/ssl/
-#     owner: root
-#     group: root
-#     mode: '0400'
-
-# - name: Create/Check ssl certificate keys directory
-#   ansible.builtin.file:
-#     path: /etc/ssl/keys/
-#     state: directory
-#     mode: '0755'
-
-# - name: Copy certificate keys
-#   ansible.builtin.copy:
-#     src: ../../files/keys/
-#     dest: /etc/ssl/keys/
-#     owner: root
-#     group: root
-#     mode: '0400'
+- name: Clean/Prepare Project Files
+  ansible.builtin.shell: |
+    ls -d {{ dest }}/* | grep -v '/src$' | xargs rm -rf && \
+    mv {{ dest }}/src/* /{{ dest }} && \
+    rm -r {{ dest }}/src
+  vars:
+    dest: /var/www/prometejs.ddns.net/
