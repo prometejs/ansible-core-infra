@@ -24,8 +24,8 @@ jobs:
 
       - name: Configure Runner Vault Key
         run: |
-          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
-          chmod 600 ~/.vault-key.txt
+          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.key
+          chmod 600 ~/.vault-key.key
 
       - name: Install Ansible
         run: |
@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install -y software-properties-common
           sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible
-      
+
       - name: Execute Ansible
         run: |
           ansible-playbook setup.yml -vvv -i 'inventories/${{ inputs.environment }}'
