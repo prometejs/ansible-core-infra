@@ -1,0 +1,9 @@
+- username: user1
+  password: password1
+  permissions: []
+- username: user2
+  password: password2
+  permissions: []
+- username: user3
+  password: password3
+  permissions: []

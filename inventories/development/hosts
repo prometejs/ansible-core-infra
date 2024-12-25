@@ -4,6 +4,9 @@
 [web_server]
 10.0.2.3
 
+[db_server]
+10.0.2.3
+
 [control_node]
 10.0.2.3
 
