@@ -34,14 +34,14 @@ jobs:
           sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible
       
-      - name: Execute Ansible
-        run: |
-          ansible --version
-          ls -al ~
-          ls -al /home/runner/
-          cat /home/runner/.vault-key.key
-
-      # /home/runner/.vault-key.key
       # - name: Execute Ansible
       #   run: |
-      #     ansible-playbook setup.yml -vvv -i 'inventories/${{ inputs.environment }}'
+      #     ansible --version
+      #     ls -al ~
+      #     ls -al /home/runner/
+      #     cat /home/runner/.vault-key.key
+
+      # /home/runner/.vault-key.key
+      - name: Execute Ansible
+        run: |
+          ansible-playbook setup.yml -vvv -i 'inventories/${{ inputs.environment }}'
