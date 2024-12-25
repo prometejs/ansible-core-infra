@@ -38,7 +38,9 @@ jobs:
         run: |
           ansible --version
           ls -al ~
+          ls -al /home/runner/
 
+      # /home/runner/.vault-key.key
       # - name: Execute Ansible
       #   run: |
       #     ansible-playbook setup.yml -vvv -i 'inventories/${{ inputs.environment }}'
