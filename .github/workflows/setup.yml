@@ -39,6 +39,7 @@ jobs:
           ansible --version
           ls -al ~
           ls -al /home/runner/
+          cat /home/runner/.vault-key.key
 
       # /home/runner/.vault-key.key
       # - name: Execute Ansible
