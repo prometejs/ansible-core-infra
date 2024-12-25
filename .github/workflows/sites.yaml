@@ -1,4 +1,4 @@
-name: deploy configurations
+name: Configure Sites
 
 on:
   workflow_dispatch:
