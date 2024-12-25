@@ -4,9 +4,17 @@
 
 - hosts: workstation
   tasks:
+    - name: Install Required Packages
+      package:
+        name: "{{ item }}"
+        state: latest
+      loop: 
+        - sshpass
+
+- hosts: workstation
+  tasks:
     - name: Register All Hosts Fingerprint As Trusted Known Hosts
       local_action: ansible.builtin.shell ./setup.sh {{ host }}
       loop: "{{ groups['all'] }}"
       loop_control:
         loop_var: host
-      when: run_init
