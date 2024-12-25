@@ -1,6 +1,6 @@
 - name: Install PostgreSQL
   include_tasks: postgresql.yml
-  register: postgres  
+  register: postgresql  
 
 - name: Install InfluxDB
   include_tasks: influxdb.yml
@@ -13,5 +13,5 @@
     tasks_from: registry
   vars:
     role_registry: 
-      - "{{ postgres }}"
+      - "{{ postgresql }}"
       - "{{ influxdb }}"
