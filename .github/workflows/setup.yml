@@ -24,8 +24,8 @@ jobs:
 
       - name: Configure Runner Vault Key
         run: |
-          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.txt
-          chmod 600 ~/.vault-key.txt
+          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.key
+          chmod 600 ~/.vault-key.key
 
       - name: Install Ansible
         run: |
