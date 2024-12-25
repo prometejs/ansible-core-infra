@@ -6,7 +6,7 @@ on:
       environment:
         type: choice
         description: Select environment
-        required: false
+        required: true
         default: 'development'
         options:
           - development
@@ -34,51 +34,6 @@ jobs:
           sudo add-apt-repository --yes --update ppa:ansible/ansible
           sudo apt-get install -y ansible
       
-      - name: Verify Ansible Installation
-        run: ansible --version
-      
-      # - name: Execute Ansible
-      #   run: |
-      #     ansible-playbook setup.yml -vvv -i ${{ inputs.environment }}
-      
-      # Install Ansible
-      # Run based on inputs
-
-      # - name: Install Ansible
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: '3.10'
-
-      # - name: Install Ansible & Add Community Collections
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install ansible
-      #     ansible-galaxy collection install community.general
-      
-      # - name: Add SSH fingerprint and configure known hosts
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     ssh-keyscan -H prometejs.ddns.net >> ~/.ssh/known_hosts
-
-      
-
-      # set -e
-      #     echo "Environment: ${{ inputs.environment }}"
-      #     echo "Servers: ${{ inputs.server-type }}"
-      #     ansible-playbook playbooks/sites/bootstrap.yaml -vvv --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
-
-      # ansible-playbook playbooks/sites/bootstrap.yaml -vvv --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
-      # - name: Add Users
-      #   run: |
-      #     set -e
-      #     echo "Environment: ${{ inputs.environment }}"
-      #     echo "Servers: ${{ inputs.server-type }}"
-      #     for playbook in ./playbooks/sites/users/*.yaml ./playbooks/sites/users/*.yml; do
-      #       if [ -f "$playbook" ]; then  
-      #         echo "Running $playbook with verbosity level 3"
-      #         ansible-playbook $playbook -vvv \
-      #         --limit '${{ inputs.environment }}:${{ inputs.server-type }}'
-      #       else
-      #         echo "Skipping $playbook, not a file."
-      #       fi
-      #     done
+      - name: Execute Ansible
+        run: |
+          ansible-playbook setup.yml -vvv -i 'inventories/${{ inputs.environment }}'
