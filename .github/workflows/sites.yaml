@@ -36,4 +36,11 @@ jobs:
       
       - name: Execute Ansible
         run: |
-          ansible-playbook site.yml -vvv -i 'inventories/${{ inputs.environment }}'
+          ansible --version
+          ls -al ~
+
+
+
+      # - name: Execute Ansible
+      #   run: |
+      #     ansible-playbook site.yml -vvv -i 'inventories/${{ inputs.environment }}'
