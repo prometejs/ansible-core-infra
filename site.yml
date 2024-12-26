@@ -7,7 +7,7 @@
   roles:
     - common
 
-- hosts: web_servers
+- hosts: web_server
   become: true
   roles:
     - web
