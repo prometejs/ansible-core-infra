@@ -1,0 +1,39 @@
+name: Configure Sites
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Select environment
+        required: true
+        default: 'development'
+        options:
+          - development
+          - production
+          - staging
+    branches:
+      - main
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Runner Vault Key
+        run: |
+          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.key
+          chmod 600 ~/.vault-key.key
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository --yes --update ppa:ansible/ansible
+          sudo apt-get install -y ansible
+      
+      - name: Execute Ansible
+        run: |
+          ansible-playbook site.yml -vvv -i 'inventories/${{ inputs.environment }}'
