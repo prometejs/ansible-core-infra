@@ -1,0 +1,2 @@
+postgresql_users: "{{ lookup('file', 'users.postgresql.yml') | from_yaml }}"
+influxdb_users: "{{ lookup('file', 'users.influxdb.yml') | from_yaml }}"

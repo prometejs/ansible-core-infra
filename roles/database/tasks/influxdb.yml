@@ -1,0 +1,25 @@
+- name: Add InfluxDB repository
+  apt_repository:
+    repo: "deb https://repos.influxdata.com/ubuntu stable InfluxDB"
+    state: present
+    filename: influxdb
+
+- name: Install InfluxDB Server & CLI
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - influxdb2
+    - influx
+
+- name: Start InfluxDB Server
+  service:
+    name: influxdb
+    state: started
+    enabled: yes
+
+- name: Enable InfluxDB as a service
+  systemd:
+    name: influxdb
+    enabled: yes
+    state: started

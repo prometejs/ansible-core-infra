@@ -1,0 +1,29 @@
+- name: Add PostgreSQL repository
+  apt_repository:
+    repo: ppa:postgresql/ppa
+    state: present
+
+- name: Install PostgreSQL
+  package:
+    name: postgresql-server
+    state: present
+
+- name: Start PostgreSQL Service
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Enable PostgreSQL as a service
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started
+
+- name: Create PostgreSQL Users
+  become_user: postgres
+  postgresql_user:
+    name: "{{ item.username }}"
+    password: "{{ item.password }}"
+    state: present
+  loop: "{{ postgresql_users }}"

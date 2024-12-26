@@ -1,0 +1,11 @@
+- name: restart_influxdb_server
+  service:
+    name: influxdb
+    state: restarted
+    daemon_reload: yes
+
+- name: restart_postgresql_server
+  service:
+    name: postgresql
+    state: restarted
+    daemon_reload: yes 
