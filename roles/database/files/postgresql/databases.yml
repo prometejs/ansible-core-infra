@@ -1,0 +1,7 @@
+- name: testdb1
+  host: &hostname 127.0.0.1
+  port: &port 5432
+  state: present
+  maintenance_db: &maintenance_db postgres
+  login_username: admin
+  login_password: iamthetestadmin
