@@ -1,6 +1,13 @@
 name: Configure Sites
 
 on:
+  workflow_run:
+    workflows:
+      - Ansible Tests
+    types:
+      - completed
+    branches:
+      - 'main'
   workflow_dispatch:
     inputs:
       environment:
@@ -12,28 +19,19 @@ on:
           - development
           - production
           - staging
-    branches:
-      - main
 
 jobs:
   configure:
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure Runner Vault Key
-        run: |
-          echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.key
-          chmod 600 ~/.vault-key.key
-
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository --yes --update ppa:ansible/ansible
-          sudo apt-get install -y ansible
-      
+      - name: Install and Setup All Dependencies
+        uses: ./.github/actions/dependencies
+        
       - name: Execute Ansible
         run: |
           ansible-playbook site.yml -vvv -i 'inventories/${{ inputs.environment }}'
+        if: github.ref_name == 'main'
