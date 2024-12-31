@@ -18,6 +18,8 @@ jobs:
 
       - name: Install and Setup All Dependencies
         uses: ./.github/actions/dependencies
+        env:
+          VAULT_KEY: ${{ secrets.VAULT_KEY }}
         with:
           test: "true"
 
