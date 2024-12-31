@@ -18,19 +18,20 @@ jobs:
 
       - name: Install and Setup All Dependencies
         uses: ./.github/actions/dependencies
+        env:
+          VAULT_KEY: ${{ secrets.VAULT_KEY }}
         with:
           test: "true"
 
       - name: Run Ansible syntax check
         run: |
-          ansible-playbook --syntax-check playbook.yml
-          echo "Checking Syntax `setup.yml` ..." && ansible-playbook --syntax-check setup.yml
-          echo "Checking Syntax `site.yml` ..." && ansible-playbook --syntax-check site.yml
+          echo "Checking Syntax -> setup.yml ..." && ansible-playbook --syntax-check setup.yml
+          echo "Checking Syntax -> site.yml ..." && ansible-playbook --syntax-check site.yml
 
       - name: Run Ansible check mode
         run: |
-          echo "Dry Run `setup.yml` ..." && ansible-playbook setup.yml --check
-          echo "Dry Run `site.yml` ..." && ansible-playbook site.yml --check
+          echo "Dry Run -> setup.yml ..." && ansible-playbook setup.yml --check
+          echo "Dry Run -> site.yml ..." && ansible-playbook site.yml --check
           
       - name: Run Role Test With Molecule
         run: |

@@ -11,7 +11,7 @@ runs:
     - name: Configure Runner Vault Key
       shell: bash
       run: |
-        echo "${{ secrets.VAULT_KEY }}" > ~/.vault-key.key
+        echo "${{ env.VAULT_KEY }}" > ~/.vault-key.key
         chmod 600 ~/.vault-key.key
 
     - name: Install Ansible
