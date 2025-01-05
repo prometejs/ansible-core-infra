@@ -1,0 +1,32 @@
+- name: Initialise CA
+  tags: 
+    - control
+    - worker
+  include_tasks: prep.yml
+  register: prep
+
+- name: Configure CAs & Issue Certificates
+  tags: 
+    - control
+  include_tasks: ca.yml
+  register: cas
+  loop: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
+
+- name: Add Root CAs To Trusted CAs
+  include_tasks: trust.yml
+  register: trust
+  loop: "{{ root_cas }}"
+
+# Run last
+- name: Create Report Registry
+  tags: 
+    - worker
+    - control
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ prep }}"
+      - "{{ cas }}"
+      # - "{{ trust }}"

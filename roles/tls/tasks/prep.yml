@@ -1,0 +1,16 @@
+- name: Get Ansible User Primary Group
+  command: id -gn
+  register: ansible_user_primary_group
+
+- name: Set Ansible User Primary Group
+  set_fact:
+    ansible_user_primary_group: "{{ ansible_user_primary_group.stdout }}"
+
+- name: Verify Directories Exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ ssl_private_dir }}"
+    - "{{ ssl_certs_dir }}"
+    - "{{ ssl_csr_dir }}"

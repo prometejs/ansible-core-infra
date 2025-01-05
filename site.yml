@@ -12,6 +12,20 @@
   roles:
     - web
 
+- hosts: control_node
+  become: true
+  tags: 
+    - control
+  roles:
+    - tls
+
+- hosts: worker_node
+  become: true
+  tags: 
+    - worker
+  roles:
+    - tls
+
 # Run last
 - hosts: all
   name: Report
