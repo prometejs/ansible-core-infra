@@ -17,14 +17,14 @@
   tags: 
     - control
   roles:
-    - ca
+    - tls
 
 - hosts: worker_node
   become: true
   tags: 
     - worker
   roles:
-    - ca
+    - tls
 
 # Run last
 - hosts: all
