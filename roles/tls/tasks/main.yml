@@ -13,6 +13,9 @@
   loop: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
 
 - name: Add Root CAs To Trusted CAs
+  tags: 
+    - control
+    - worker
   include_tasks: trust.yml
   register: trust
   loop: "{{ root_cas }}"

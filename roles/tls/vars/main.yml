@@ -1,3 +1,4 @@
+ssl_trust_dir: /usr/local/share/ca-certificates
 ssl_private_dir: /etc/ssl/private/
 ssl_certs_dir: /etc/ssl/certs/
 ssl_csr_dir: /etc/ssl/csr/
