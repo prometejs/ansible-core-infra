@@ -1,7 +1,6 @@
 - name: Initialise CA
   tags: 
-    - control
-    - worker
+    - always
   include_tasks: prep.yml
   register: prep
 
@@ -12,10 +11,19 @@
   register: cas
   loop: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
 
-- name: Add Root CAs To Trusted CAs
+- name: Copy CAs From Control Node to Workstation Node
   tags: 
     - control
-    - worker
+  fetch:
+    src: "{{ ssl_certs_dir }}/{{ item.name }}.crt"
+    dest: "/tmp/cas/{{ item.name }}.crt"
+    flat: true
+  register: load
+  loop: "{{ root_cas }}"
+
+- name: Add Root CAs To Trusted CAs For All Nodes
+  tags: 
+    - always
   include_tasks: trust.yml
   register: trust
   loop: "{{ root_cas }}"
@@ -23,8 +31,7 @@
 # Run last
 - name: Create Report Registry
   tags: 
-    - worker
-    - control
+    - always
   include_role:
     name: common
     tasks_from: registry
@@ -32,4 +39,5 @@
     role_registry: 
       - "{{ prep }}"
       - "{{ cas }}"
+      - "{{ load }}"
       - "{{ trust }}"

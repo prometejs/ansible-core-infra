@@ -12,19 +12,12 @@
   roles:
     - web
 
-- hosts: control_node
+- hosts: 
+    - control_node
+    - worker_node
   become: true
-  tags: 
-    - control
   roles:
-    - tls
-
-- hosts: worker_node
-  become: true
-  tags: 
-    - worker
-  roles:
-    - tls
+    - role: tls
 
 # Run last
 - hosts: all

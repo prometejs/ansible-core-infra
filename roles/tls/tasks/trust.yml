@@ -1,11 +1,3 @@
-- name: Copy CAs From Control Node to Workstation Node
-  tags:
-    - control
-  fetch:
-    src: "{{ ssl_certs_dir }}/{{ item.name }}.crt"
-    dest: "/tmp/cas/{{ item.name }}.crt"
-    flat: true
-
 - name: Push file to another node
   tags: 
     - worker
