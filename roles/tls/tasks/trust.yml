@@ -1,14 +1,8 @@
 - name: Push file to another node
-  tags: 
-    - worker
-    - control
   copy:
     src: "/tmp/cas/{{ item.name }}.crt"
     dest: "{{ ssl_trust_dir }}/{{ item.name }}.crt"
 
 - name: Update CA Trust
-  tags: 
-    - worker
-    - control
   shell: |
     update-ca-certificates

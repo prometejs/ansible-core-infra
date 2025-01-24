@@ -1,37 +1,30 @@
-- name: Initialise CA
-  tags: 
-    - always
+- name: Prepare TLS Dependencies
   include_tasks: prep.yml
   register: prep
 
 - name: Configure CAs & Issue Certificates
-  tags: 
-    - control
   include_tasks: ca.yml
   register: cas
   loop: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
+  when: inventory_hostname in groups['control_node']
 
 - name: Copy CAs From Control Node to Workstation Node
-  tags: 
-    - control
   fetch:
     src: "{{ ssl_certs_dir }}/{{ item.name }}.crt"
     dest: "/tmp/cas/{{ item.name }}.crt"
     flat: true
   register: load
   loop: "{{ root_cas }}"
+  when: inventory_hostname in groups['control_node']
 
 - name: Add Root CAs To Trusted CAs For All Nodes
-  tags: 
-    - always
   include_tasks: trust.yml
   register: trust
   loop: "{{ root_cas }}"
+  when: inventory_hostname in groups['worker_node']
 
 # Run last
 - name: Create Report Registry
-  tags: 
-    - always
   include_role:
     name: common
     tasks_from: registry
