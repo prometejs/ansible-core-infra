@@ -25,3 +25,8 @@ entity_cas:
       signer: prometejs.intermediate
     csr:
       common_name: Prometejs Edge
+  - name: etcd.edge
+    cert:
+      signer: prometejs.intermediate
+    csr:
+      common_name: Prometejs Edge

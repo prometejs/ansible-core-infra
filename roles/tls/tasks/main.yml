@@ -21,7 +21,6 @@
   include_tasks: trust.yml
   register: trust
   loop: "{{ root_cas }}"
-  when: inventory_hostname in groups['worker_node']
 
 # Run last
 - name: Create Report Registry
