@@ -8,16 +8,16 @@
   loop: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
   when: inventory_hostname in groups['control_node']
 
-- name: Copy CAs From Control Node to Workstation Node
+- name: Copy CAs From Control Node to Ansible Workstation Node
   fetch:
     src: "{{ ssl_certs_dir }}/{{ item.name }}.crt"
-    dest: "/tmp/cas/{{ item.name }}.crt"
+    dest: "{{ tmp_cas_dir }}/{{ item.name }}.crt"
     flat: true
   register: load
   loop: "{{ root_cas }}"
   when: inventory_hostname in groups['control_node']
 
-- name: Add Root CAs To Trusted CAs For All Nodes
+- name: Add CAs To Trusted CAs For All Nodes
   include_tasks: trust.yml
   register: trust
   loop: "{{ root_cas }}"
