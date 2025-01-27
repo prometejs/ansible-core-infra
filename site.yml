@@ -19,6 +19,14 @@
   roles:
     - role: tls
 
+- hosts: 
+    - control_node
+    - worker_node
+    - firewall
+  become: true
+  roles:
+    - role: networking
+
 # Run last
 - hosts: all
   name: Report

@@ -16,3 +16,5 @@
 [worker_node]
 10.0.2.4
 10.0.2.5
+
+[firewall]
