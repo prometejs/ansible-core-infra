@@ -1,0 +1,33 @@
+ssl_trust_dir: /usr/local/share/ca-certificates
+ssl_private_dir: /etc/ssl/private/
+ssl_certs_dir: /etc/ssl/certs/
+ssl_csr_dir: /etc/ssl/csr/
+tmp_cas_dir: /tmp/cas/
+
+root_cas:
+  - name: prometejs.root 
+    cert:
+      signer: prometejs.root 
+    csr:  
+      common_name: Prometejs Root
+
+intermediate_cas:
+  - name: prometejs.intermediate
+    cert:
+      signer: prometejs.root
+    csr:
+      common_name: Prometejs Intermediate
+
+entity_cas:
+  - name: prometejs.edge
+    chain: true
+    cert:
+      signer: prometejs.intermediate
+    csr:
+      common_name: Prometejs Edge
+  - name: etcd.edge
+    chain: true
+    cert:
+      signer: prometejs.intermediate
+    csr:
+      common_name: Prometejs Edge
