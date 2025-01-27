@@ -17,6 +17,13 @@
     - worker_node
   become: true
   roles:
+    - tls
+
+- hosts: 
+    - control_node
+    - worker_node
+  become: true
+  roles:
     - monitoring
 
 # Run last
