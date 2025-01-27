@@ -1,0 +1,86 @@
+# Global configuration options
+[meta]
+  dir = "/var/lib/influxdb/meta"                # Directory for metadata storage.
+  retention-autocreate = true                   # Automatically create retention policies.
+  logging-enabled = true                        # Enable logging for the metadata service.
+
+[data]
+  dir = "/var/lib/influxdb/data"                # Directory for time-series data.
+  wal-dir = "/var/lib/influxdb/wal"             # Directory for write-ahead logs.
+  wal-fsync-delay = "0s"                        # Maximum delay for WAL fsync.
+  query-log-enabled = true                      # Enable logging of queries.
+  cache-max-memory-size = 1073741824            # Maximum size of the cache (in bytes).
+  cache-snapshot-memory-size = 26214400         # Size of the cache to snapshot (in bytes).
+  cache-snapshot-write-cold-duration = "10m"    # Duration to snapshot cache if not written.
+  compact-full-write-cold-duration = "4h"       # Duration to compact full blocks if not written.
+  max-series-per-database = 1000000             # Maximum number of series per database.
+  max-values-per-tag = 100000                   # Maximum number of tag values per tag key.
+
+[coordinator]
+  write-timeout = "10s"                         # Write timeout duration.
+  max-concurrent-queries = 0                    # Maximum number of concurrent queries.
+  query-timeout = "0s"                          # Query timeout duration (0 means no timeout).
+  log-queries-after = "0s"                      # Log queries taking longer than this duration.
+
+[retention]
+  enabled = true                                # Enable retention policy enforcement.
+  check-interval = "30m"                        # How often to check for retention policy enforcement.
+
+[shard-precreation]
+  enabled = true                                # Enable shard group precreation.
+  check-interval = "10m"                        # How often to check for shard precreation.
+  advance-period = "30m"                        # How far ahead to create shard groups.
+
+[monitor]
+  store-enabled = true                          # Store monitoring data.
+  store-database = "_internal"                  # Database for monitoring data.
+  store-interval = "10s"                        # Interval to store monitoring data.
+
+[http]
+  enabled = true                                # Enable the HTTP API.
+  bind-address = ":8086"                        # Address to bind the HTTP service.
+  auth-enabled = true                           # Enable authentication.
+  log-enabled = true                            # Enable HTTP request logging.
+  write-tracing = false                         # Log all HTTP write requests.
+  pprof-enabled = true                          # Enable pprof endpoints.
+  pprof-auth-enabled = true                     # Enable authentication on pprof endpoints.
+  debug-pprof-enabled = false                   # pprof enable debug mode.
+  https-enabled = false                         # Enable HTTPS.
+  https-certificate = "/etc/ssl/influxdb.pem"   # Path to the HTTPS certificate.
+  https-private-key = "/etc/ssl/influxdb.key"   # Path to the HTTPS private key.
+
+[[graphite]]
+  enabled = false                               # Enable Graphite input.
+  bind-address = ":2003"                        # Address to bind Graphite service.
+  protocol = "tcp"                              # Protocol to use (tcp/udp).
+  consistency-level = "one"                     # Write consistency level.
+  name-separator = "."                          # Separator for metric names.
+
+[[collectd]]
+  enabled = false                               # Enable collectd input.
+  bind-address = ":25826"                       # Address to bind collectd service.
+  database = "collectd"                         # Database for collectd data.
+  typesdb = "/usr/share/collectd/types.db"      # Path to types.db file.
+
+[opentsdb]
+  enabled = false                               # Enable OpenTSDB input.
+  bind-address = ":4242"                        # Address to bind OpenTSDB service.
+  database = "opentsdb"                         # Database for OpenTSDB data.
+
+[udp]
+  enabled = false                               # Enable UDP listener.
+  bind-address = ":8089"                        # Address to bind UDP listener.
+  database = "udp"                              # Database for UDP data.
+
+[continuous_queries]
+  log-enabled = true                            # Enable logging of continuous queries.
+  enabled = true                                # Enable continuous queries.
+  query-stats-enabled = false                   # Enable query statistics.
+
+[logging]
+  format = "auto"                               # Log format (auto, logfmt, or json).
+  level = "info"                                # Log level (debug, info, warn, error).
+  suppress-logo = false                         # Suppress logo output on startup.
+
+[monitoring]
+  enabled = true                                # Enable monitoring telemetry.

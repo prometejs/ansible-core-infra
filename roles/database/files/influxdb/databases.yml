@@ -1,0 +1,5 @@
+- name: testdb1
+  host: &hostname localhost
+  port: &port 8086
+  login_username: admin
+  login_password: iamthetestadmin

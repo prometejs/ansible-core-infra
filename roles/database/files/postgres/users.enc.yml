@@ -1,0 +1,13 @@
+- name: guest1
+  password: changeme # can be passed unhashed or hashed (MD5-hashed).
+  maintenance_db: &maintenance_db postgres 
+  login_username: &login_username admin
+  login_password: &login_password iamthetestadmin
+  login_host: &login_host 127.0.0.1
+  port: &port 5432
+  role_attr_flags: # user attributes string in the format: CREATEDB,CREATEROLE,SUPERUSER.
+  permissions:
+    - database: testdb1
+      privs: INSERT,UPDATE
+      object_names: ALL_IN_SCHEMA # comma separated list of names of database objects to set privileges on.
+      type_of_objects: database # type of database object to set privileges on. .e.g. table, function schema ...etc

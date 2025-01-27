@@ -12,6 +12,11 @@
   roles:
     - web
 
+- hosts: db_server
+  become: true
+  roles:
+    - database
+
 # Run last
 - hosts: all
   name: Report

@@ -1,0 +1,17 @@
+- name: Install PostgreSQL
+  include_tasks: postgresql.yml
+  register: postgresql  
+
+- name: Install InfluxDB
+  include_tasks: influxdb.yml
+  register: influxdb
+
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ postgresql }}"
+      - "{{ influxdb }}" 
