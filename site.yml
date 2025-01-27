@@ -12,6 +12,11 @@
   roles:
     - web
 
+- hosts: control_node
+  become: true
+  roles:
+    - notification
+
 # Run last
 - hosts: all
   name: Report
