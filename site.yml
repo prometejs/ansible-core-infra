@@ -12,6 +12,13 @@
   roles:
     - web
 
+- hosts: 
+    - control_node
+    - worker_node
+  become: true
+  roles:
+    - monitoring
+
 # Run last
 - hosts: all
   name: Report
