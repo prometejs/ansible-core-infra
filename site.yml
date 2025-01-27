@@ -19,6 +19,13 @@
   roles:
     - role: tls
 
+- hosts: 
+    - control_node
+    - worker_node
+  become: true
+  roles:
+    - role: configuration
+
 # Run last
 - hosts: all
   name: Report
