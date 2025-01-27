@@ -19,6 +19,11 @@
   roles:
     - role: tls
 
+- hosts: control_node
+  become: true
+  roles:
+    - role: messagging
+
 # Run last
 - hosts: all
   name: Report
