@@ -10,18 +10,20 @@
   community.crypto.openssl_csr:
     path: "{{ ssl_csr_dir }}/{{ item.name }}.csr"
     privatekey_path: "{{ ssl_private_dir }}/{{ item.csr.signer | default(item.name) }}.pem"
-    common_name: "{{ item.common_name | default(None) }}"
+    common_name: "{{ item.csr.common_name | default(None) }}"
     state: "{{ item.state | default('present') }}"
     mode: "{{ item.mode | default('0644') }}"
     owner: "{{ item.owner | default(ansible_user) }}"
-    country_name: "{{ item.country_name | default(None) }}"
-    email_address: "{{ item.email_address | default(None) }}"
+    country_name: "{{ item.csr.country_name | default(None) }}"
+    email_address: "{{ item.csr.email_address | default(None) }}"
     group: "{{ item.group | default(ansible_user_primary_group) }}"
-    organization_name: "{{ item.organization_name | default(None) }}"
-    organizational_unit_name: "{{ item.organizational_unit_name | default(None) }}"
-    state_or_province_name: "{{ item.state_or_province_name | default(None) }}"
-    subject: "{{ item.subject | default({}) }}"
-    subject_alt_name: "{{ item.subject_alt_name | default([]) }}"
+    organization_name: "{{ item.csr.organization_name | default(None) }}"
+    organizational_unit_name: "{{ item.csr.organizational_unit_name | default(None) }}"
+    state_or_province_name: "{{ item.csr.state_or_province_name | default(None) }}"
+    subject: "{{ item.csr.subject | default({}) }}"
+    subject_alt_name: "{{ item.csr.subject_alt_name | default([]) }}"
+    locality_name: "{{ item.csr.locality_name | default(None) }}"
+    authority_cert_issuer: "{{ item.csr.authority_cert_issuer | default([]) }}"
 
 - name: Generate CA self-signed certificate
   community.crypto.x509_certificate:
