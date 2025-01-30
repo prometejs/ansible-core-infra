@@ -7,17 +7,18 @@
   roles:
     - common
 
+- hosts: 
+    - control_node
+    - worker_node
+    - web_server
+  become: true
+  roles:
+    - role: tls
+
 - hosts: web_server
   become: true
   roles:
     - web
-
-- hosts: 
-    - control_node
-    - worker_node
-  become: true
-  roles:
-    - role: tls
 
 # Run last
 - hosts: all

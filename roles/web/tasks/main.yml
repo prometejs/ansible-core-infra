@@ -15,6 +15,15 @@
       owner: www-data
       mode: '0444'
 
+- name: import Self Signed Web SSL
+  include_tasks: 
+  include_role:
+    name: tls
+    tasks_from: ca.yml
+  register: ssc
+  vars:
+    entity_cas: "{{web_certs}}"
+
 - name: Set Up Prometejs
   include_tasks: prometejs.yml
   register: prometejs
@@ -36,5 +45,6 @@
     role_registry: 
       - "{{ nginx }}"
       - "{{ ssl }}"
+      - "{{ ssc }}"
       - "{{ prometejs }}"
       - "{{ sites }}" 
