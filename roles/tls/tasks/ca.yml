@@ -1,4 +1,4 @@
-- name: Generate CA private key
+- name: Generate CA private key [{{ item.name | upper }}]
   community.crypto.openssl_privatekey:
     path: "{{ ssl_private_dir }}/{{ item.name }}.pem"
     size: "{{ item.size | default('2048')}}"
@@ -6,7 +6,7 @@
     type: "{{ item.type | default('RSA') }}"
     owner: "{{ item.owner | default(ansible_user) }}"
 
-- name: Generate CA CSR
+- name: Generate CA CSR [{{ item.name | upper }}]
   community.crypto.openssl_csr:
     path: "{{ ssl_csr_dir }}/{{ item.name }}.csr"
     privatekey_path: "{{ ssl_private_dir }}/{{ item.csr.signer | default(item.name) }}.pem"
@@ -23,11 +23,10 @@
     subject: "{{ item.csr.subject | default({}) }}"
     subject_alt_name: "{{ item.csr.subject_alt_name | default([]) }}"
     locality_name: "{{ item.csr.locality_name | default(None) }}"
-    authority_cert_issuer: "{{ item.csr.authority_cert_issuer | default([]) }}"
 
-- name: Generate CA self-signed certificate
+- name: Generate CA self-signed certificate [{{ item.name | upper }}]
   community.crypto.x509_certificate:
-    path: "{{ ssl_certs_dir }}/{{ item.name }}.crt"
+    path: "{{ ssl_certs_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
     privatekey_path: "{{ ssl_private_dir }}/{{ item.cert.signer | default(item.name) }}.pem"
     csr_path: "{{ ssl_csr_dir }}/{{ item.name }}.csr"
     state: "{{ item.state | default('present') }}"
@@ -39,8 +38,8 @@
     selfsigned_digest: "{{ item.digest | default('sha256') }}"
     selfsigned_version: "{{ item.version | default('3')}}"
 
-- name: Build CA self-signed certificate chain
+- name: Build CA self-signed certificate chain [{{ item.name | upper }}]
   include_tasks: chain.yml
   vars: 
     cert: "{{ item }}"
-  when: item.chain is defined and item.chain
+  when: item.chain | default(false) | bool
