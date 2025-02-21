@@ -1,26 +1,20 @@
 - name: Prepare TLS Dependencies
-  include_tasks: prep.yml
-  register: prep
+  include_tasks: init.yml
+  register: init
+  when: inventory_hostname in groups['ca']
 
 - name: Configure CAs & Issue Certificates
   include_tasks: ca.yml
   register: cas
-  loop: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
-  when: inventory_hostname in groups['control_node']
+  run_once: true
+  loop: "{{ certs }}"
+  loop_control:
+    loop_var: item
+  when: not ( item.created | default(false) ) and inventory_hostname in groups['ca']
 
-- name: Copy CAs From Control Node to Ansible Workstation Node
-  fetch:
-    src: "{{ ssl_certs_dir }}/{{ item.name }}.crt"
-    dest: "{{ tmp_cas_dir }}/{{ item.name }}.crt"
-    flat: true
-  register: load
-  loop: "{{ root_cas }}"
-  when: inventory_hostname in groups['control_node']
-
-- name: Add CAs To Trusted CAs For All Nodes
+- name: Trust Root CAs
   include_tasks: trust.yml
   register: trust
-  loop: "{{ root_cas }}"
 
 # Run last
 - name: Create Report Registry
@@ -29,7 +23,6 @@
     tasks_from: registry
   vars:
     role_registry: 
-      - "{{ prep }}"
+      - "{{ init }}"
       - "{{ cas }}"
-      - "{{ load }}"
       - "{{ trust }}"

@@ -1,16 +1,30 @@
-- name: Build Cert Chain
-  vars:
-    current: "{{ cert }}"
-    chain: []
+- name: Set Facts [{{ cert.name | upper }}]
+  ansible.builtin.set_fact:
+    certs: "{{ root_cas + intermediate_cas + entity_cas }}" 
+    out_file_ext: ".{{ cert.ext | default('crt') }}"
+    out_file: "{{ ssl_certs_dir + cert.name + '.' + ( cert.ext | default('crt') ) }}"
+    chain: "{{ [ cert ] }}"  
+
+- name: Build Cert Chain [{{ cert.name | upper }}]
   set_fact:
-    chain: "{{ ([ssl_certs_dir + '/' + current.name + '.crt'] + chain) | unique }}"
-    current: "{{ ( (root_cas + intermediate_cas + entity_cas) | selectattr('name', '==', current.cert.signer) )[0] }}"
-    chain_file: "{{ ssl_certs_dir }}/{{ cert.name }}.pem"
-  when: current is not none and current.cert.signer != current.name # second condition excludes root
+    chain: "{{ chain + ( certs | selectattr('name', '==', chain[-1].cert.signer) ) }}"
+  when: chain[-1].cert.signer is not none and chain[-1].cert.signer != chain[-1].name
   loop: "{{ range(0, cas | length ) }}"
   loop_control:
     loop_var: _
 
-- name: Create Chain File And Add Contents
+- name: Transform Cert Chain [{{ cert.name | upper }}]
+  set_fact:
+    chain: "{{ cert.include_chain_root | default(false) | ternary(chain[1:], chain[1:-1]) | map(attribute='name') | map('regex_replace', '^(.*)$', ssl_certs_dir+'\\1') | map('regex_replace', '^(.*)$', '\\1'+ out_file_ext) | join(' ') }}"
+
+- name: Add Chain Content to Chain File [{{ cert.name | upper }}]
   shell: |
-    cat {{ chain | reverse | join(' ') }} > {{ chain_file }}
+    cat {{ chain }} >> {{ out_file }}
+  when: chain != '' and ( chain | split (' ') | length > 0 )
+
+- name: Configure Chain File Permisssions [{{ cert.name | upper }}]
+  ansible.builtin.file:
+    path: "{{ out_file }}"
+    owner: "{{ cert.owner | default(ansible_user) }}"
+    group: "{{ cert.group | default(ansible_user_primary_group) }}"
+    mode: "{{ cert.mode | default('644') }}"
