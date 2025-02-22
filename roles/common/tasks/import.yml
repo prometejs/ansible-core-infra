@@ -1,0 +1,20 @@
+- name: Fetch File
+  fetch: 
+    src: "{{ src }}"
+    dest: "{{ tmp }}"
+    flat: "{{ flat | default(true) }}"
+  delegate_to: "{{ src_host }}"
+
+- name: Import File
+  copy:
+    src: "{{ tmp }}"
+    dest: "{{ dest }}"
+    owner: "{{ owner | default(omit) }}"
+    group: "{{ group | default(omit) }}"
+    mode: "{{ mode | default('0444') }}"
+
+- name: Clean Temp Files
+  file:
+    path: "{{ tmp }}"
+    state: absent
+  when: clean | default(true)
