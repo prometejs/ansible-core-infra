@@ -1,34 +1,23 @@
-- name: Install NGINX
+- name: Install Nginx
   package:
     name: nginx
     state: latest
     update_cache: yes
+  notify: start_enable_nginx
 
-- name: Remove Default Site Configs
-  file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - /etc/nginx/conf.d/default.conf
-    - /etc/nginx/conf.d/
-
-- name: Create Sites Directories
+- name: Configure Sites Directories
   file:
     path: "{{ item }}"
     state: directory
   loop:
-    - "{{ sites_enabled_path }}"
-    - "{{ sites_available_path }}"
+    - "{{ nginx_sites_enabled_path }}"
+    - "{{ nginx_sites_available_path }}"
 
-- name: Deploy Nginx configuration
+- name: Add Nginx Configuration
   template:
     src: templates/nginx.conf.j2
     dest: /etc/nginx/nginx.conf
     mode: '0644'
- 
-- name: Start and enable NGINX
-  service:
-    name: nginx
-    state: started
-    enabled: yes
-  ignore_errors: True
+  notify: restart_nginx
+
+# configure nginx user to have access to certs dir

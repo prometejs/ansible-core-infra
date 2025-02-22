@@ -6,7 +6,7 @@ pid /run/nginx.pid;
 error_log  /var/log/nginx/error.log notice;
 
 events {
-    worker_connections {{ worker_connections }};
+    worker_connections {{ nginx_worker_connections }};
     # multi_accept on;
 }
 
