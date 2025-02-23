@@ -28,7 +28,7 @@
 - name: Import SSL Certs Keys [CAs]
   vars: 
     <<: *vars
-    mode: '0400'
+    mode: '0440'
   include_role: *include_role
   loop: "{{ ssl_keys }}"
 

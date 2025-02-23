@@ -9,7 +9,7 @@
   ansible.builtin.git:
     key_file: ~/.ssh/prometejs.deploy  
     repo: git@github.com:Prometejs/website.git
-    dest: /var/www/prometejs.ddns.net/
+    dest: "{{ app_prometejs_root }}"
     version: v1.0.1
     force: true
 
@@ -19,4 +19,4 @@
     mv {{ dest }}/src/* /{{ dest }} && \
     rm -r {{ dest }}/src
   vars:
-    dest: /var/www/prometejs.ddns.net/
+    dest: "{{ app_prometejs_root }}"

@@ -12,20 +12,19 @@
   loop:
     - apps/prometejs.yml
 
-# # revisit
-# - name: Deploy Nginx Sites
-#   include_tasks: sites.yml
-#   register: sites
-#   loop: "{{ nginx_sites }}"
+- name: Deploy Nginx Sites
+  include_tasks: sites.yml
+  register: sites
+  loop: "{{ nginx_sites }}"
 
-# # Run last
-# - name: Create Report Registry
-#   include_role:
-#     name: common
-#     tasks_from: registry
-#   vars:
-#     role_registry: 
-#       - "{{ nginx }}"
-#       - "{{ ssl }}"
-#       - "{{ install }}"
-#       # - "{{ sites }}" 
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ nginx }}"
+      - "{{ ssl }}"
+      - "{{ install }}"
+      - "{{ sites }}" 

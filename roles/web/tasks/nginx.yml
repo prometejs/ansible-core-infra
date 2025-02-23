@@ -10,8 +10,10 @@
     path: "{{ item }}"
     state: directory
   loop:
-    - "{{ nginx_sites_enabled_path }}"
-    - "{{ nginx_sites_available_path }}"
+    - "{{ nginx_sites_enabled_path }}/http"
+    - "{{ nginx_sites_enabled_path }}/stream"
+    - "{{ nginx_sites_available_path }}/http"
+    - "{{ nginx_sites_available_path }}/stream"
 
 - name: Add Nginx Configuration
   template:
@@ -20,4 +22,11 @@
     mode: '0644'
   notify: restart_nginx
 
-# configure nginx user to have access to certs dir
+- name: Add Nginx User Required Groups
+  user:
+    name: "{{ nginx_user }}"
+    groups: "{{ item }}"
+    append: yes
+  loop:
+    - "{{ ssl_cert_group | default('ssl-cert') }}"
+    - "{{ super_user | default('ssl-cert') }}"

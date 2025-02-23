@@ -1,20 +1,20 @@
-# Deploy all sites
+- name: Add Sites [{{ item.name | upper }}]
+  vars:
+    site: "{{ item.config }}"
+  ansible.builtin.template:
+    src: "templates/sites.conf.j2"
+    dest: &config_path "{{ nginx_sites_available_path }}/{{ item.protocol }}/{{ item.name }}.conf"
+    owner: "{{ item.owner | default(nginx_user) }}"
+    group: "{{ item.group | default(omit) }}"
+    mode: "{{ item.mode | default('0440') }}"
 
-- name: Add Site To Available Sites
-  ansible.builtin.copy:
-    src: "{{ item.src }}"
-    dest: "{{ sites_available_path }}"
-    owner: "{{ item.owner | default('www-data') }}"
-    mode: "{{ item.mode | default('0444') }}"
-    group: "{{ item.group | default('www-data') }}"
-
-- name: Configure Enabled Sites
+- name: Enable Sites [{{ item.name | upper }}]
   ansible.builtin.file:
-    src: "{{ sites_available_path + '/' + item.name + '.conf' if item.enabled else None }}"
-    dest: "{{ sites_enabled_path }}/{{ item.name }}.conf"
-    owner: "{{ item.owner | default('www-data') }}"
-    mode: "{{ item.mode | default('0444') }}"
-    group: "{{ item.group | default('www-data') }}"
-    state: "{{ 'link' if item.enabled else 'absent' }}"
+    src: *config_path
+    dest: "{{ nginx_sites_enabled_path }}/{{ item.protocol }}/{{ item.name }}.conf"
+    owner: "{{ item.owner | default(nginx_user) }}"
+    group: "{{ item.group | default(omit) }}"
+    mode: "{{ item.mode | default('0440') }}"
+    state: "{{ 'link' if item.enable else 'absent' }}"
   notify:
     - restart_nginx
