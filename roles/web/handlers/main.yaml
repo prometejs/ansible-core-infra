@@ -3,3 +3,10 @@
     name: nginx
     state: restarted
     daemon_reload: yes
+
+- name: start_enable_nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  ignore_errors: True

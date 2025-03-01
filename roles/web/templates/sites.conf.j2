@@ -1,0 +1,82 @@
+{% for stream in site.upstreams | default([]) %}
+upstream {{ stream.name }} {
+    {% for server in stream.servers | default([]) %}
+    server {{ server.address }}{% if server.parameters %} {{ server.parameters }}{% endif %};
+    {% endfor %}
+    
+    {% if stream.load_balancing_method %}
+    {{ stream.load_balancing_method }};
+    {% endif %}
+
+    {% if stream.zone %}
+    {{ stream.zone }};
+    {% endif %}
+
+    {% if stream.hash %}
+    {{ stream.hash }};
+    {% endif %}    
+}
+{% endfor %}
+
+{% for server in site.servers | default([]) %}
+server {
+
+    listen                      {{ server.port }} {% if server.ssl | default(None) %}ssl{% endif %};
+    listen                      [::]:{{ server.port }} {% if server.ssl | default(None) %}ssl{% endif %};
+    server_name                 {{ server.name }};
+    keepalive_timeout           {{ server.keepalive_timeout | default('60s') }};
+
+    access_log                  {{ server.access_log | default('/var/log/'+server.name+'.access.log') }};
+    error_log                   {{ server.error_log | default('/var/log/'+server.name+'.error.log') }};
+
+{% if server.ssl | default(None) %}
+    # SSL configuration
+    ssl_certificate             {{ server.ssl.ssl_certificate }};
+    ssl_certificate_key         {{ server.ssl.ssl_certificate_key }};
+    ssl_prefer_server_ciphers   {{ server.sslssl_prefer_server_ciphers | default('off') }};
+{% if server.ssl.ssl_protocols | default(None) %}
+    ssl_protocols               {{ server.ssl.ssl_protocols }};
+{% endif %}
+{% if server.ssl.ssl_ciphers | default(None) %}
+    ssl_ciphers                 {{ server.ssl.ssl_ciphers }};
+{% endif %}
+{% endif %}
+
+{% if server.redirect | default(None) %}
+    # Redirect configuration
+    return  {{ server.redirect.code | default(301) }}  {{ server.redirect.protocol | default('https') }}://$host$request_uri;
+{% endif %}
+
+
+{% for location in server.locations | default([]) %} 
+    location {{ location.path | default('/') }} {% if location.pattern | default(None) %} {{ location.pattern }} {% endif %} {
+{% if location.proxy_pass | default(None) %}
+        proxy_pass              {{ location.proxy_pass }};
+{% endif %}
+{% if location.root | default(None) %}
+        root                    {{ location.root }};
+{% endif %}
+{% if location.try_files | default(None) %}
+        try_files               {{ location.try_files | default('$uri $uri/ =404') }};
+{% endif %}
+{% if location.index | default(None) %}
+        index                   {{ location.index | default('index.htm index.html') }};
+{% endif %}
+{% if location.expires | default(None) %}
+        expires                 {{ location.expires | default('1y') }}; # Cache static files for 1 year
+{% endif %}
+        access_log              {{ location.access_log | default('off')}}; # Turn off logging for performance
+        error_log               {{ location.error_log | default('on') }};
+{% if location.headers | default(None) %}
+{% for header in location.headers.proxy | default([]) %} 
+        proxy_set_header        {{ header }};
+{% endfor %}
+{% for header in location.headers.static | default([]) %} 
+        add_header              {{ header }};
+{% endfor %}
+{% endif %}
+    }
+{% endfor %}
+
+}
+{% endfor %}
