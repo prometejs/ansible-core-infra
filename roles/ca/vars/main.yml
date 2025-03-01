@@ -10,38 +10,34 @@ root_cas:
       signer: prometejs.root 
     csr:  
       common_name: prometejs.root
-    created: true # control flag
 
 intermediate_cas:
   - name: prometejs.intermediate
-    chain: true
+    chain: false
     cert:
       signer: prometejs.root
     csr:
       common_name: prometejs.intermediate
-    created: true
 
 entity_cas:
-  - name: etcd.edge
-    chain: false
-    cert:
-      signer: prometejs.intermediate
-    csr:
-      common_name: etcd.prometejs.io
-      subject_alt_name: 
-        - DNS:etcd.dev.prometejs.io
-        - DNS:etcd.staging.prometejs.io
-    # created: true
-  - name: nats.edge
-    chain: true
-    cert:
-      signer: prometejs.intermediate
-    csr:
-      common_name: nats.prometejs.io
-      subject_alt_name: 
-        - DNS:nats.dev.prometejs.io
-        - DNS:nats.staging.prometejs.io
-    # created: true
+  # - name: etcd.edge
+  #   chain: false
+  #   cert:
+  #     signer: prometejs.intermediate
+  #   csr:
+  #     common_name: etcd.prometejs.io
+  #     subject_alt_name: 
+  #       - DNS:etcd.dev.prometejs.io
+  #       - DNS:etcd.staging.prometejs.io
+  # - name: nats.edge
+  #   chain: false
+  #   cert:
+  #     signer: prometejs.intermediate
+  #   csr:
+  #     common_name: nats.prometejs.io
+  #     subject_alt_name: 
+  #       - DNS:nats.dev.prometejs.io
+  #       - DNS:nats.staging.prometejs.io
   - name: web.edge
     chain: true
     cert:
@@ -54,12 +50,16 @@ entity_cas:
         - DNS:*.dev.prometejs.io
         - DNS:staging.prometejs.io
         - DNS:*.staging.prometejs.io
-    # created: true
+
   - name: test.edge
     chain: true
-    include_chain_root: true
     cert:
-      signer: prometejs.intermediate
+      signer: web.edge
     csr:
-      common_name: test.prometejs.io
-    # created: true
+      common_name: prometejs.io
+      subject_alt_name: 
+        - DNS:*.prometejs.io
+        - DNS:dev.prometejs.io
+        - DNS:*.dev.prometejs.io
+        - DNS:staging.prometejs.io
+        - DNS:*.staging.prometejs.io

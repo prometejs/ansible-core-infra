@@ -1,4 +1,4 @@
-- name: Generate CA private key [{{ item.name | upper }}]
+- name: Gener ate Private Key [{{ item.name | upper }}]
   community.crypto.openssl_privatekey:
     path: "{{ ssl_private_dir }}/{{ item.name }}.pem"
     size: "{{ item.size | default('2048')}}"
@@ -6,10 +6,10 @@
     type: "{{ item.type | default('RSA') }}"
     owner: "{{ item.owner | default(ansible_user) }}"
 
-- name: Generate CA CSR [{{ item.name | upper }}]
+- name: Generate CSR [{{ item.name | upper }}]
   community.crypto.openssl_csr:
     path: "{{ ssl_csr_dir }}/{{ item.name }}.csr"
-    privatekey_path: "{{ ssl_private_dir }}/{{ item.csr.signer | default(item.name) }}.pem"
+    privatekey_path: "{{ ssl_private_dir }}/{{ item.name }}.pem"
     common_name: "{{ item.csr.common_name | default(None) }}"
     state: "{{ item.state | default('present') }}"
     mode: "{{ item.mode | default('0644') }}"
@@ -24,19 +24,32 @@
     subject_alt_name: "{{ item.csr.subject_alt_name | default([]) }}"
     locality_name: "{{ item.csr.locality_name | default(None) }}"
 
-- name: Generate CA self-signed certificate [{{ item.name | upper }}]
-  community.crypto.x509_certificate:
-    path: "{{ ssl_certs_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
-    privatekey_path: "{{ ssl_private_dir }}/{{ item.cert.signer | default(item.name) }}.pem"
-    csr_path: "{{ ssl_csr_dir }}/{{ item.name }}.csr"
-    state: "{{ item.state | default('present') }}"
-    provider: selfsigned
-    mode: "{{ item.mode | default('644') }}"
-    group: "{{ item.group | default(ansible_user_primary_group) }}"
-    owner: "{{ item.owner | default(ansible_user) }}"
+- name: Generate Self Signed Certificate [{{ item.name | upper }}]
+  community.crypto.x509_certificate: 
     selfsigned_not_after: "{{ item.expiry | default('+7300d') }}"
     selfsigned_digest: "{{ item.digest | default('sha256') }}"
     selfsigned_version: "{{ item.version | default('3')}}"
+    provider: selfsigned
+    <<: &certificate
+      path: "{{ ssl_certs_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+      privatekey_path: "{{ ssl_private_dir }}/{{ item.name }}.pem"
+      csr_path: "{{ ssl_csr_dir }}/{{ item.name }}.csr"
+      state: "{{ item.state | default('present') }}"
+      mode: "{{ item.mode | default('644') }}"
+      group: "{{ item.group | default(ansible_user_primary_group) }}"
+      owner: "{{ item.owner | default(ansible_user) }}"
+  when: item.name == item.cert.signer
+
+- name: Generate CA Signed Certificate [{{ item.name | upper }}]
+  community.crypto.x509_certificate:
+    ownca_path: "{{ ssl_certs_dir }}/{{ item.cert.signer }}.{{ item.ext | default('crt') }}"
+    ownca_privatekey_path: "{{ ssl_private_dir }}/{{ item.cert.signer }}.pem"
+    ownca_digest: "{{ item.digest | default('sha256') }}"
+    ownca_not_after: "{{ item.expiry | default('+7300d') }}"
+    ownca_version: "{{ item.version | default('3')}}"
+    provider: ownca
+    <<: *certificate
+  when: item.name != item.cert. signer
 
 - name: Build CA self-signed certificate chain [{{ item.name | upper }}]
   include_tasks: chain.yml

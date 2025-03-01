@@ -15,12 +15,17 @@
 
 - name: Transform Cert Chain [{{ cert.name | upper }}]
   set_fact:
-    chain: "{{ cert.include_chain_root | default(false) | ternary(chain[1:], chain[1:-1]) | map(attribute='name') | map('regex_replace', '^(.*)$', ssl_certs_dir+'\\1') | map('regex_replace', '^(.*)$', '\\1'+ out_file_ext) | join(' ') }}"
+    chain: "{{ cert.include_chain_root | default(false) | ternary(chain[1:], chain[1:-1]) | map(attribute='name') | 
+               map('regex_replace', '^(.*)$', ssl_certs_dir+'\\1'+out_file_ext) }}"
 
-- name: Add Chain Content to Chain File [{{ cert.name | upper }}]
-  shell: |
-    cat {{ chain }} >> {{ out_file }}
-  when: chain != '' and ( chain | split (' ') | length > 0 )
+- name: Ensure a block of text is present in a file
+  blockinfile: 
+    path: "{{ out_file }}"
+    block: "{{ lookup('ansible.builtin.file', file) }}"
+    marker: "# {mark} {{ file | basename | upper}} [INTERMEDIATE CA]"
+  loop: "{{ chain }}"
+  loop_control:
+    loop_var: file
 
 - name: Configure Chain File Permisssions [{{ cert.name | upper }}]
   ansible.builtin.file:

@@ -10,7 +10,7 @@
   loop: "{{ certs }}"
   loop_control:
     loop_var: item
-  when: not ( item.created | default(false) ) and inventory_hostname in groups['ca']
+  when: inventory_hostname in groups['ca']
 
 - name: Trust Root CAs
   include_tasks: trust.yml
