@@ -16,7 +16,7 @@ ssl_ca_certs:
 
 ssl_fs_certs:
   - src: files/prometejs/prometejs.key
-    dest: "{{ ssl_certs_dir }}"
+    dest: "{{ ssl_private_dir }}/prometejs.key"
     owner: "{{ nginx_user }}"
     mode: '0400'
   - src: files/prometejs/prometejs.pem
