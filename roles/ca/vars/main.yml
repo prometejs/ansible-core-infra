@@ -4,20 +4,53 @@ ssl_certs_dir: /etc/ssl/certs/
 ssl_csr_dir: /etc/ssl/csr/
 tmp_cas_dir: /tmp/cas/
 
+v3_root_ca_ext: &v3_root_ca_ext # Extensions for a typical CA (`man x509v3_config`).
+  basic_constraints: ["CA:TRUE" ]
+  key_usage: ["digitalSignature", "cRLSign", "keyCertSign"]
+  create_subject_key_identifier: true
+  key_usage_critical: true
+  basic_constraints_critical: true
+v3_intermediate_ca_ext: &v3_intermediate_ca_ext # Extensions for a typical intermediate CA (`man x509v3_config`).
+  <<: *v3_root_ca_ext
+  basic_constraints: ["CA:TRUE", "pathlen:0"]
+  create_subject_key_identifier: true
+  basic_constraints_critical: true
+v3_usr_cert_ext: &v3_usr_cert_ext # Extensions for client certificates (`man x509v3_config`).
+  basic_constraints: ["CA:FALSE"]
+  extended_key_usage: ["clientAuth", "emailProtection"]
+  key_usage: ["nonRepudiation", "digitalSignature", "keyEncipherment"]
+  create_subject_key_identifier: true
+  key_usage_critical: true
+v3_server_cert_ext: &v3_server_cert_ext # Extensions for server certificates (`man x509v3_config`).
+  basic_constraints: ["CA:FALSE"]
+  key_usage: ["digitalSignature", "keyEncipherment"]
+  extended_key_usage: ["serverAuth"] 
+  create_subject_key_identifier: true
+  key_usage_critical: true
+v3_crl_ext_ext: &v3_crl_ext_ext # Extension for CRLs (`man x509v3_config`).
+v3_ocsp_ext: &v3_ocsp_ext # Extension for OCSP signing certificates (`man ocsp`).
+  basic_constraints: ["CA:FALSE"]
+  key_usage: ["digitalSignature"]
+  extended_key_usage: ["OCSPSigning"]
+  create_subject_key_identifier: true
+  key_usage_critical: true
+  extended_key_usage_critical: true
+
 root_cas:
   - name: prometejs.root 
     cert:
       signer: prometejs.root 
     csr:  
       common_name: prometejs.root
+      <<: *v3_root_ca_ext
 
 intermediate_cas:
   - name: prometejs.intermediate
-    chain: false
     cert:
       signer: prometejs.root
     csr:
       common_name: prometejs.intermediate
+      <<: *v3_intermediate_ca_ext
 
 entity_cas:
   - name: etcd.edge
@@ -25,6 +58,7 @@ entity_cas:
     cert:
       signer: prometejs.intermediate
     csr:
+      <<: *v3_usr_cert_ext
       common_name: etcd.prometejs.io
       subject_alt_name: 
         - DNS:etcd.dev.prometejs.io
@@ -34,6 +68,7 @@ entity_cas:
     cert:
       signer: prometejs.intermediate
     csr:
+      <<: *v3_usr_cert_ext
       common_name: nats.prometejs.io
       subject_alt_name: 
         - DNS:nats.dev.prometejs.io
@@ -43,6 +78,7 @@ entity_cas:
     cert:
       signer: prometejs.intermediate
     csr:
+      <<: *v3_server_cert_ext
       common_name: prometejs.io
       subject_alt_name: 
         - DNS:*.prometejs.io

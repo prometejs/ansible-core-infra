@@ -1,4 +1,4 @@
-- name: Gener ate Private Key [{{ item.name | upper }}]
+- name: Generate Private Key [{{ item.name | upper }}]
   community.crypto.openssl_privatekey:
     path: "{{ ssl_private_dir }}/{{ item.name }}.pem"
     size: "{{ item.size | default('2048')}}"
@@ -23,6 +23,13 @@
     subject: "{{ item.csr.subject | default({}) }}"
     subject_alt_name: "{{ item.csr.subject_alt_name | default([]) }}"
     locality_name: "{{ item.csr.locality_name | default(None) }}"
+    basic_constraints: "{{ item.csr.basic_constraints | default(omit) }}"
+    key_usage : "{{ item.csr.key_usage | default(omit) }}"
+    extended_key_usage: "{{ item.csr.extended_key_usage | default(omit) }}"
+    authority_key_identifier: "{{ item.csr.authority_key_identifier | default(omit) }}"
+    subject_key_identifier : "{{ item.csr.subject_key_identifier | default(omit) }}"
+    key_usage_critical: "{{ item.csr.key_usage_critical | default(omit) }}"
+    basic_constraints_critical: "{{ item.csr.basic_constraints_critical | default(omit) }}"
 
 - name: Generate Self Signed Certificate [{{ item.name | upper }}]
   community.crypto.x509_certificate: 
@@ -49,7 +56,7 @@
     ownca_version: "{{ item.version | default('3')}}"
     provider: ownca
     <<: *certificate
-  when: item.name != item.cert. signer
+  when: item.name != item.cert.signer
 
 - name: Build CA self-signed certificate chain [{{ item.name | upper }}]
   include_tasks: chain.yml
