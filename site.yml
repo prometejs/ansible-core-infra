@@ -14,7 +14,7 @@
     - control_node
   become: true
   roles:
-    - tls
+    - ca
 
 - hosts: web_server
   become: true
