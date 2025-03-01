@@ -1,0 +1,14 @@
+- name: Import Root CAs
+  vars:
+    src: "{{ ssl_certs_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+    dest: "{{ ssl_trust_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+    tmp: "{{ tmp_cas_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+    src_host: "{{ groups['ca'][0] }}"
+  include_role:
+    name: common
+    tasks_from: import
+  loop: "{{ root_cas }}"
+
+- name: Update CA Trust
+  shell: |
+    update-ca-certificates
