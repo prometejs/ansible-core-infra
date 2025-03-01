@@ -1,18 +1,50 @@
-ssl_private_path: /etc/ssl/sites/private/
-ssl_certs_path: /etc/ssl/sites/certs/
-sites_available_path: /etc/nginx/sites-available/
-sites_enabled_path: /etc/nginx/sites-enabled/
-worker_connections: '1024'
+ssl_private_dir: /etc/ssl/private/
+ssl_certs_dir: /etc/ssl/certs/
+tmp_cas_dir: /tmp/cas/
+
+nginx_sites_available_path: /etc/nginx/sites-available/
+nginx_sites_enabled_path: /etc/nginx/sites-enabled/
+nginx_worker_connections: '1024'
 nginx_user: www-data
 
-web_certs:
-  - name: prometejs.wildcard.edge
-    chain: true
-    cert:
-      signer: prometejs.intermediate
-    csr:
-      common_name: '*.prometejs.io'
-      country_name: GH
-      organization_name: Prometejs
-      organizational_unit_name: Web
-      state_or_province_name: Greater Accra
+app_prometejs_root: /var/www/prometejs.io/
+app_grafana_root: tbd
+app_etcd_root: tbd
+
+ssl_ca_certs:
+  - name: web.edge
+
+ssl_fs_certs:
+  - src: files/prometejs/prometejs.key
+    dest: "{{ ssl_certs_dir }}"
+    owner: "{{ nginx_user }}"
+    mode: '0400'
+  - src: files/prometejs/prometejs.pem
+    dest: "{{ ssl_certs_dir }}"
+    owner: "{{ nginx_user }}"
+
+nginx_sites:
+  - name: prometejs
+    enable: true
+    protocol: http
+    config:
+      servers:
+        - name: dev.prometejs.io
+          port: 443
+          ssl: 
+            ssl_certificate: "{{ ssl_certs_dir }}/web.edge.crt"
+            ssl_certificate_key: "{{ ssl_private_dir }}/web.edge.pem"
+          locations: 
+            - path: /
+              root: "{{ app_prometejs_root }}"
+            - path: ~*
+              pattern: \.(js|jpg|png|css|txt)$
+              root: "{{ app_prometejs_root }}"
+              headers:
+                static:
+                  - Cache-Control "public"
+
+        - name: dev.prometejs.io
+          port: 80
+          redirect:
+            protocol: https

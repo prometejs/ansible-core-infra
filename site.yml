@@ -8,12 +8,13 @@
     - common
 
 - hosts: 
-    - control_node
-    - worker_node
+    - ca
     - web_server
+    - worker_node
+    - control_node
   become: true
   roles:
-    - role: tls
+    - ca
 
 - hosts: web_server
   become: true

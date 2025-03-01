@@ -1,0 +1,28 @@
+- name: Prepare TLS Dependencies
+  include_tasks: init.yml
+  register: init
+  when: inventory_hostname in groups['ca']
+
+- name: Configure CAs & Issue Certificates
+  include_tasks: ca.yml
+  register: cas
+  run_once: true
+  loop: "{{ certs }}"
+  loop_control:
+    loop_var: item
+  when: inventory_hostname in groups['ca']
+
+- name: Trust Root CAs
+  include_tasks: trust.yml
+  register: trust
+
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ init }}"
+      - "{{ cas }}"
+      - "{{ trust }}"

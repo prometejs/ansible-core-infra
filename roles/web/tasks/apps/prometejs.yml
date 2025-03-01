@@ -1,22 +1,22 @@
-- name: Copy Prometejs Deploy Key
+- name: Import Prometejs Deploy Key
   ansible.builtin.copy:
     src: files/prometejs/deploy.key
-    dest: /home/{{ ansible_user }}/.ssh/prometejs.deploy
+    dest: ~/.ssh/prometejs.deploy
     owner: "{{ ansible_user }}"
     mode: '0400'
 
-- name: Clone Prometejs Project 
+- name: Clone Prometejs From Git 
   ansible.builtin.git:
-    key_file: "/home/{{ ansible_user }}/.ssh/prometejs.deploy"   
+    key_file: ~/.ssh/prometejs.deploy  
     repo: git@github.com:Prometejs/website.git
-    dest: /var/www/prometejs.ddns.net/
+    dest: "{{ app_prometejs_root }}"
     version: v1.0.1
     force: true
 
-- name: Clean/Prepare Project Files
+- name: Clean Prometejs Files
   ansible.builtin.shell: |
     ls -d {{ dest }}/* | grep -v '/src$' | xargs rm -rf && \
     mv {{ dest }}/src/* /{{ dest }} && \
     rm -r {{ dest }}/src
   vars:
-    dest: /var/www/prometejs.ddns.net/
+    dest: "{{ app_prometejs_root }}"

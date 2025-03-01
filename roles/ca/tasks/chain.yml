@@ -1,0 +1,35 @@
+- name: Set Facts [{{ cert.name | upper }}]
+  ansible.builtin.set_fact:
+    certs: "{{ root_cas + intermediate_cas + entity_cas }}" 
+    out_file_ext: ".{{ cert.ext | default('crt') }}"
+    out_file: "{{ ssl_certs_dir + cert.name + '.' + ( cert.ext | default('crt') ) }}"
+    chain: "{{ [ cert ] }}"  
+
+- name: Build Cert Chain [{{ cert.name | upper }}]
+  set_fact:
+    chain: "{{ chain + ( certs | selectattr('name', '==', chain[-1].cert.signer) ) }}"
+  when: chain[-1].cert.signer is not none and chain[-1].cert.signer != chain[-1].name
+  loop: "{{ range(0, cas | length ) }}"
+  loop_control:
+    loop_var: _
+
+- name: Transform Cert Chain [{{ cert.name | upper }}]
+  set_fact:
+    chain: "{{ cert.include_chain_root | default(false) | ternary(chain[1:], chain[1:-1]) | map(attribute='name') | 
+               map('regex_replace', '^(.*)$', ssl_certs_dir+'\\1'+out_file_ext) }}"
+
+- name: Ensure a block of text is present in a file
+  blockinfile: 
+    path: "{{ out_file }}"
+    block: "{{ lookup('ansible.builtin.file', file) }}"
+    marker: "# {mark} {{ file | basename | upper}} [INTERMEDIATE CA]"
+  loop: "{{ chain }}"
+  loop_control:
+    loop_var: file
+
+- name: Configure Chain File Permisssions [{{ cert.name | upper }}]
+  ansible.builtin.file:
+    path: "{{ out_file }}"
+    owner: "{{ cert.owner | default(ansible_user) }}"
+    group: "{{ cert.group | default(ansible_user_primary_group) }}"
+    mode: "{{ cert.mode | default('644') }}"
