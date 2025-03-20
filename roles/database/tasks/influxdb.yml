@@ -11,6 +11,8 @@
   loop:
     - influxdb2
     - influx
+    - python3-pip
+    - psycopg2
 
 - name: Start InfluxDB Server
   service:
@@ -24,33 +26,34 @@
     enabled: yes
     state: started
 
-- name: Manage Users
+- name: Manage Users [Influxdb]
   community.general.influxdb_user:
-    user_name: "{{ item.username }}"
-    user_password: "{{ item.password }}"
-    login_username: "{{ item.login_username | default(None) }}"
+    user_name: "{{ item.user_name }}"
+    user_password: "{{ item.user_password }}"
+    login_username: "{{ item.login_username | default('root') }}"
     login_password: "{{ item.login_password |  default(None) }}"
-    hostname: "{{ item.host | default('localhost') }}"
+    hostname: "{{ item.hostname | default('localhost') }}"
     port: "{{ item.port | default('8086') }}"
     admin: "{{ item.admin | default(false) }}"
     grants: "{{ item.grants | default(None) }}"
     state: "{{ item.state | default('present') }}"
   loop: "{{ influxdb_users }}"
 
-- name: Manage Databases
+- name: Manage Databases [Influxdb]
   community.general.influxdb_database:
-    database_name: "{{ item.name }}"
-    hostname: "{{ item.host | default('localhost') }}"
+    database_name: "{{ item.database_name }}"
+    hostname: "{{ item.hostname | default('localhost') }}"
     username: "{{ item.login_username | default(None) }}"
     password: "{{ item.login_password |  default(None) }}"
     ssl: "{{ item.ssl | default(false) }}"
     validate_certs: "{{ item.validate_certs | default(false) }}"
     state: "{{ item.state | default('present') }}"
+    port: "{{ item.port | default('8086') }}"
   loop: "{{ influxdb_databases }}"
 
-- name: Manage InfluxDB Config
-  template:
-    src: templates/influxdb.conf.j2
-    dest: /etc/influxdb/influxdb.conf
-    mode: '0444'
-  notify: restart_influxdb_server
+# - name: Manage InfluxDB Config
+#   template:
+#     src: templates/influxdb.conf.j2
+#     dest: /etc/influxdb/influxdb.conf
+#     mode: '0444'
+#   notify: restart_influxdb_server

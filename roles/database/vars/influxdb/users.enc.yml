@@ -1,25 +1,28 @@
 # create new admin
-- username: &admin_username admin
-  password: &admin_password iamthetestadmin
+- user_name: &admin_username admin
+  user_password: &admin_password iamthetestadmin
   state: present
   admin: true
-  host: &host "localhost"
+  hostname: &hostname "localhost"
   port: &port 8086
   login_username: root
   login_password: root
 
 # remove default admin
-- username: root
+- user_password: root
   state: absent
   login_username: *admin_username
   login_password: *admin_password
 
 # create guest user
-- username: guest
-  password: iamthetestguest
+- user_name: guest
+  user_password: iamthetestguest
   state: present
   login_username: *admin_username
   login_password: *admin_password
+  hostname: *hostname
+  port: *port
+  admin: false
   grants: 
     - database: 'default'
       privilege: 'WRITE'

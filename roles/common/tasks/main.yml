@@ -21,6 +21,12 @@
   include_tasks: dns.yml
   register: dns
 
+- name: Install Common Packages
+  ansible.builtin.package:
+    name: "{{ item.name }}{{ '=' + item.version if item.version is defined else '' }}"
+    state: "{{ item.state | default('latest') }}"
+  loop: "{{ packages }}"
+
 # Run last
 - name: Create Report Registry
   include_tasks: registry.yml

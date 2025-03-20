@@ -1,0 +1,13 @@
+- database_name: guestdb
+  hostname: &hostname localhost
+  port: &port 8086
+  login_username: admin
+  login_password: iamthetestadmin
+  state: present
+
+  # database_name
+  # hostname
+  # login_password
+  # port
+  # login_username
+  # state
