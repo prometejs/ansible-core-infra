@@ -5,6 +5,7 @@
 - name: Set Ansible User Primary Group
   set_fact:
     ansible_user_primary_group: "{{ ansible_user_primary_group.stdout }}"
+    certs: "{{ root_cas + intermediate_cas + entity_cas }}" # Ordered list based on dependency
 
 - name: Verify Directories Exist
   file:
@@ -14,3 +15,11 @@
     - "{{ ssl_private_dir }}"
     - "{{ ssl_certs_dir }}"
     - "{{ ssl_csr_dir }}"
+
+- name: Install Required Packages
+  package:
+    name: "{{ item.name }}"
+    state: "{{ item.version }}"
+  loop: 
+    - name: jq
+      version: latest

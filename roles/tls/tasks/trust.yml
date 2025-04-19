@@ -1,8 +1,0 @@
-- name: Push file to another node
-  copy:
-    src: "{{ tmp_cas_dir }}/{{ item.name }}.crt"
-    dest: "{{ ssl_trust_dir }}/{{ item.name }}.crt"
-
-- name: Update CA Trust
-  shell: |
-    update-ca-certificates

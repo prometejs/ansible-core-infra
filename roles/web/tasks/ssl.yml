@@ -1,7 +1,42 @@
-- name: Copy SSl Certs
+- name: Set SSL Facts [CAs]
+  vars:
+    ssl_key:
+      src: "{{ ssl_private_dir }}/{{ item.name }}.pem"
+      dest: "{{ tmp_cas_dir }}/{{ item.name }}.pem"
+      tmp: "{{ tmp_cas_dir }}/{{ item.name }}.pem"
+    ssl_cert:
+      src: "{{ ssl_certs_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+      dest: "{{ tmp_cas_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+      tmp: "{{ tmp_cas_dir }}/{{ item.name }}.{{ item.ext | default('crt') }}"
+  set_fact:
+    ssl_keys: "{{ (ssl_keys | default([])) + [ssl_key] }}"
+    ssl_certs: "{{ (ssl_certs | default([])) + [ssl_cert] }}"
+  loop: "{{ ssl_ca_certs }}"
+
+- name: Import SSL Cert [CAs]
+  vars: &vars
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    tmp: "{{ item.tmp }}"
+    src_host: "{{ groups['ca'][0] }}"
+    owner: "{{ nginx_user }}"
+  include_role: &include_role
+    name: common
+    tasks_from: import
+  loop: "{{ ssl_certs }}"
+
+- name: Import SSL Certs Keys [CAs]
+  vars: 
+    <<: *vars
+    mode: '0440'
+  include_role: *include_role
+  loop: "{{ ssl_keys }}"
+
+- name: Import SSL Certs [FILES]
   copy:
     src: "{{ item.src }}"
-    dest: "{{ item.path }}"
-    owner: "{{ item.owner | default(None) }}"
-    group: "{{ item.owner | default(None) }}"
-    mode: "{{ item.mode | default(None) }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(omit) }}"
+    group: "{{ item.owner | default(omit) }}"
+    mode: "{{ item.mode | default('0444') }}"
+  loop: "{{ ssl_fs_certs }}"

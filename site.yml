@@ -7,17 +7,19 @@
   roles:
     - common
 
+- hosts: 
+    - ca
+    - web_server
+    - worker_node
+    - control_node
+  become: true
+  roles:
+    - ca
+
 - hosts: web_server
   become: true
   roles:
     - web
-
-- hosts: 
-    - control_node
-    - worker_node
-  become: true
-  roles:
-    - tls
 
 - hosts: 
     - control_node
