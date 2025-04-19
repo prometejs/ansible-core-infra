@@ -1,0 +1,8 @@
+- name: guestdb
+  state: present
+  owner: guest
+  port: &port 5432
+  login_host: &login_host 127.0.0.1
+  login_user: &admin_username admin
+  login_password: &admin_password iamthetestadmin
+  maintenance_db: &maintenance_db postgres

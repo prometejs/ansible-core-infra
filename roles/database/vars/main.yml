@@ -1,2 +1,4 @@
+postgresql_users: "{{ lookup('file', 'vars/postgres/users.enc.yml') | from_yaml }}"
 influxdb_users: "{{ lookup('file', 'vars/influxdb/users.enc.yml') | from_yaml }}"
+postgresql_databases: "{{ lookup('file', 'vars/postgres/databases.enc.yml') | from_yaml }}"
 influxdb_databases: "{{ lookup('file', 'vars/influxdb/databases.enc.yml') | from_yaml }}"

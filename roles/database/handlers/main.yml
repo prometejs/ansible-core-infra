@@ -4,6 +4,12 @@
     state: restarted
     daemon_reload: yes
 
+- name: restart_postgresql_server
+  service:
+    name: postgresql
+    state: restarted
+    daemon_reload: yes 
+
 - name: update_apt_package_list
   apt:
     update_cache: yes

@@ -1,0 +1,88 @@
+- name: Install Dependencies
+  ansible.builtin.package:
+    name:
+      - curl 
+      - ca-certificates
+      - python3-psycopg2
+    state: latest
+
+- name: Add Repository Configuration
+  shell: |
+    sudo install -d /usr/share/postgresql-common/pgdg
+    sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+  notify: update_apt_package_list
+
+- name: Install PostgreSQL
+  package:
+    name:
+      - postgresql-contrib
+      - postgresql
+    state: present
+
+- name: Start PostgreSQL Service
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Enable PostgreSQL as a service
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started
+
+- name: Manage Users [Postgres]
+  postgresql_user:
+    db: "{{ item.maintenance_db | default('postgres') }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password | default(None) }}"
+    state: "{{ item.state | default('present') }}"
+    login_host: "{{ item.login_host | default('127.0.0.1') }}"
+    login_password: "{{ item.login_password }}"
+    login_user: "{{ item.login_user }}"
+    port: "{{ item.port | default('5432') }}"
+    role_attr_flags: "{{ item.role_attr_flags | default('') }}"
+  loop: "{{ postgresql_users }}"
+  # no_log: true
+
+- name: Manage Databases [Postgres]
+  community.postgresql.postgresql_db:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('present') }}"
+    owner: "{{ item.owner | default('') }}"
+    maintenance_db: "{{ maintenance_db | default('postgres') }}"
+    login_host: "{{ item.login_host | default('127.0.0.1') }}"
+    login_user: "{{ item.login_user | default('') }}"
+    login_password: "{{ item.login_password |  default('') }}"
+    port: "{{ item.port | default('5432') }}"
+    ssl_cert: "{{ item.ssl_cert | default(None) }}"
+    ssl_key: "{{ item.ssl_key | default(None) }}"
+    ssl_mode: "{{ item.ssl_mode | default('prefer') }}"
+    ca_cert: "{{ item.ca_cert | default(None) }}"
+  loop: "{{ postgresql_databases }}"
+
+- name: Manage User Privileges [Postgres]
+  community.postgresql.postgresql_privs:
+    database: "{{ item.maintenance_db | default('postgres') }}"
+    grant_option: "{{ item.grant_option | default(true) }}"
+    login_host: "{{ item.host | default('127.0.0.1') }}"
+    login_password: "{{ item.login_password }}"
+    login_user: "{{ item.login_user }}"
+    objs: "{{ item.obj | default(None) }}"
+    port: "{{ item.port | default('5432') }}"
+    privs: "{{ item.privs | default([]) }}"
+    roles: "{{ item.port | default('5432') }}"
+    schema: "{{ item.schema | default('public') }}"
+    state: "{{ item.state | default('present') }}"
+    target_roles: "{{ item.target_roles | default('None') }}"
+    type: "{{ item.type | default(None) }}"
+  loop: "{{ postgresql_users }}"
+
+# get postgres version
+# - name: Manage Postgresql Config
+#   template:
+#     src: templates/postgres/postgresql.conf.j2
+#     dest: /etc/postgresql/<version>/main/postgresql.conf
+#     mode: '0444'
+#   notify: restart_postgresql_server

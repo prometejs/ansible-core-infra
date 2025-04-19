@@ -2,10 +2,10 @@
 # Site Configs ##
 # # # # # # # ### 
 
-- hosts: all
-  become: true
-  roles:
-    - common
+# - hosts: all
+#   become: true
+#   roles:
+#     - common
 
 - hosts: 
     - ca
@@ -16,24 +16,24 @@
   roles:
     - ca
 
-- hosts: web_server
-  become: true
-  roles:
-    - web
+# - hosts: web_server
+#   become: true
+#   roles:
+#     - web
 
 - hosts: db_server
   become: true
   roles:
     - database
 
-# Run last
-- hosts: all
-  name: Report
-  tasks:
-    - name: Create & Email Report
-      include_role:
-        name: common
-        tasks_from: report
-      vars:
-        registry: "{{hostvars[inventory_hostname]['registry']}}"
-      when: hostvars[inventory_hostname]['registry'] is defined
+# # Run last
+# - hosts: all
+#   name: Report
+#   tasks:
+#     - name: Create & Email Report
+#       include_role:
+#         name: common
+#         tasks_from: report
+#       vars:
+#         registry: "{{hostvars[inventory_hostname]['registry']}}"
+#       when: hostvars[inventory_hostname]['registry'] is defined

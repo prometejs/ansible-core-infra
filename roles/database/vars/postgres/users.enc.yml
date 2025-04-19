@@ -1,0 +1,49 @@
+# set password for default user
+- name: &default_name postgres
+  password: &default_password postgres
+  state: present
+  maintenance_db: postgres
+  login_user: hermes
+  login_password: hermes
+
+# create new admin
+- name: &admin_name admin67
+  password: &admin_password iamthetestadmin
+  maintenance_db: &maintenance_db postgres
+  login_host: &login_host 127.0.0.1
+  login_password: 
+  login_user: postgres
+  port: &port 5432
+  state: present
+  role_attr_flags: SUPERUSER
+  permissions:
+    - database: postgres
+
+# create guest user
+- name: guest
+  password: changeme # can be passed unhashed or hashed (MD5-hashed).
+  maintenance_db: *maintenance_db
+  login_user: *admin_name
+  login_password: *admin_password
+  login_host: *login_host
+  port: *port
+  permissions:
+    - maintenance_db: testdb1
+      privs: INSERT,UPDATE
+      object_names: ALL_IN_SCHEMA
+      type_of_objects: database
+
+
+      # database
+      # grant_option
+      # login_host
+      # login_password
+      # login_user
+      # objs
+      # port
+      # privs
+      # roles
+      # schema
+      # state
+      # target_roles
+      # type
