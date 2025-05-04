@@ -1,0 +1,19 @@
+- name: Load Supervisor Program Configs
+  template:
+    src: program.conf.j2
+    dest: "{{ supervisor_config_path }}/conf.d/{{ item.name }}.conf"
+    force: true
+    owner: root
+    group: root
+    mode: 0644
+  when: ( item.state | default('present') != 'absent' ) and ( item.host_groups is not defined or inventory_hostname in item.host_groups )
+  loop: "{{ supervisor_programs }}"
+  notify: restart_supervisord
+
+- name: Clean Unwanted Supervisor Program Configs
+  file:
+    path: "{{ supervisor_config_path }}/conf.d/{{ item.name }}.conf"
+    state: absent
+  when: ( item.state | default('present') == 'absent' ) and ( item.host_groups is not defined or inventory_hostname in item.host_groups )
+  with_items: "{{ supervisor_programs }}"
+  notify: restart_supervisord

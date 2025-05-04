@@ -1,0 +1,33 @@
+- name: Verify Supervisor Unit File[for systemd systems]
+  template:
+    src: supervisord.unit.j2
+    dest: /etc/systemd/system/supervisord.service
+    owner: root
+    group: root
+    mode: 0644
+  when: "ansible_service_mgr == 'systemd'"
+  notify: restart_supervisor
+
+- name: Verify Supervisor Configuration
+  template:
+    src: supervisord/supervisord.conf.j2
+    dest: "{{ supervisor_config_path }}/supervisord.conf"
+    mode: 0644
+  notify: restart_supervisor
+
+- name: Verify Program Config Paths
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  loop:
+    - "{{ supervisor_config_path }}"
+    - "{{ supervisor_config_path }}/conf.d"
+
+- name: Verify Supervisor Log Directory
+  file:
+    path: "{{ supervisor_log_dir }}"
+    state: directory
+    mode: 0755

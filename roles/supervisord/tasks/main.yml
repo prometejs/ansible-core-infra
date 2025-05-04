@@ -1,0 +1,22 @@
+- name: Install & Start Supervisord
+  include_tasks: install.yml
+  register: install
+
+- name: Configure Supervisord
+  include_tasks: setup.yml
+  register: setup
+
+- name: Load Program Configurations
+  include_tasks: config.yml
+  register: config
+
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ install }}"
+      - "{{ config }}"
+      - "{{ setup }}"

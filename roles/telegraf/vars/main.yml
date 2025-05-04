@@ -1,0 +1,26 @@
+telegraf_input_plugins:
+  - name: cpu
+    config:
+      percpu: "true"
+      totalcpu: "true"
+      fielddrop: ["time_*"]
+  - name: disk
+    config:
+      ignore_fs: ["tmpfs", "devtmpfs"]
+  - name: diskio
+    host_groups: ["all"]
+  - name: kernel
+    host_groups: ["all"]
+  - name: mem
+  - name: processes
+  - name: swap
+  - name: system
+  - name: procstat
+    host_groups: ["all"]
+    config:
+      exe: "supervisord"
+      pid_tag: true
+  - name: procstat
+    config:
+      exe: "nginx"
+      pid_tag: true

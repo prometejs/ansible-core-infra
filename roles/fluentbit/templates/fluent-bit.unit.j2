@@ -1,0 +1,29 @@
+# Fluent-bit service for systemd
+[Unit]
+Description=Fluentbit daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ supervisor_bin_path }} -c {{ supervisor_config_path }}/supervisord.conf
+ExecStop={{ supervisorctl_bin_path }} $OPTIONS shutdown
+ExecReload={{ supervisorctl_bin_path }} $OPTIONS reload
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+
+
+# [Unit]
+# Description=My Custom Service
+# After=network.target
+
+# [Service]
+# Type=simple
+# ExecStart=/usr/bin/my-command --option
+# Restart=on-failure
+
+# [Install]
+# WantedBy=multi-user.target

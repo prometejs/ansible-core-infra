@@ -4,10 +4,10 @@
 [workstation]
 10.0.2.3
 
-[web_server]
+[master]
 10.0.2.3
 
-[db_server]
+[web_server]
 10.0.2.3
 
 [control_node]
@@ -19,3 +19,19 @@
 
 [ca]
 10.0.2.3
+
+[grafana]
+10.0.2.3
+
+[supervisord]
+10.0.2.3
+10.0.2.4
+10.0.2.5
+
+[fluentbit]
+10.0.2.3
+
+[telegraf]
+10.0.2.3
+10.0.2.4
+10.0.2.5

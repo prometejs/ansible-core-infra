@@ -1,0 +1,1 @@
+<!-- https://github.com/geerlingguy/ansible-role-supervisor/blob/master/defaults/main.yml -->

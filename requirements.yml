@@ -1,0 +1,5 @@
+collections:
+  - name: community.general
+    version: "10.5.0"
+  - name: grafana.grafana
+    version: "5.7.0"
