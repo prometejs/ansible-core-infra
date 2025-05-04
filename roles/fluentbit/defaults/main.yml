@@ -1,48 +1,40 @@
 os_codename: focal
 configuration_dir: /etc/fluent-bit/
+configuration_file_name: fluent-bit.yml
+bin_path: /usr/bin/fluent-bit
 gpg_key: "https://packages.fluentbit.io/fluentbit.key"
 apt_repo: "deb https://packages.fluentbit.io/ubuntu/{{ os_codename }} {{ os_codename }} main"
 pkg: fluent-bit
-pkg_version: 4.0.0
+pkg_version: 4.0.1
 service_name: fluent-bit
 
 # [SERVICE] -> https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/yaml/service-section
-flush: 1
-grace: 5
-daemon: off
-dns_mode: UDP
-log_file: /var/log/fluentbit.log
-log_level: info
-parsers_file: none
-plugins_file: none
-streams_file: none
-http_server: off
-http_listen: 0.0.0.0
-http_port: 2020
-hot_reload: on
-coro_stack_size: 24576
-scheduler_cap: 2000
-scheduler_base: 5
-json_convert_nan_to_null: false
-sp_convert_from_str_to_num: true
-
-# [PARSERS] -> https://docs.fluentbit.io/manual/pipeline/parsers/configuring-parser
+service:
+  flush: 1
+  grace: 5
+  daemon: off
+  dns_mode: UDP
+  log_file: /var/log/fluentbit.log
+  log_level: info
+  parsers_file: none
+  plugins_file: none
+  streams_file: none
+  http_server: off
+  http_listen: 0.0.0.0
+  http_port: 2020
+  hot_reload: on
+  coro_stack_size: 24576
+  scheduler_cap: 2000
+  scheduler_base: 5
+  json_convert_nan_to_null: false
+  sp_convert_from_str_to_num: true
 parsers: []
-
-# [MULTILINE PARSERS]
 multiline_parsers: []
-
-# [PIPELINE]
-pipeline: {}
-
-# [PLUGINS]
 plugins: []
-
-# [UPSTREAM_SERVERS]
 upstream_servers: []
-
-# [ENV]
 env: []
-
-# [INCLUDE]
 includes: []
+pipeline: 
+  inputs: []
+  filters: []
+  outputs: []

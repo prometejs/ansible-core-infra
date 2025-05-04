@@ -1,41 +1,55 @@
 service:
-    flush: {{ flush }}
-    grace: {{ grace }}
-    daemon: {{ daemon }}
+    flush: {{ service.flush }}
+    grace: {{ service.grace }}
+    daemon: {{ service.daemon }}
     dns:
-        mode: {{ dns_mode }}
-    log_file: {{ log_file }}
-    log_level: {{ log_level }}
-    http_server: {{ http_server }}
-    http_listen: {{ http_listen }}
-    http_port: {{ http_port }}
-    hot_reload: {{ hot_reload }}
-    coro_stack_size: {{ coro_stack_size }}
+        mode: {{ service.dns_mode }}
+    log_file: {{ service.log_file }}
+    log_level: {{ service.log_level }}
+    http_server: {{ service.http_server }}
+    http_listen: {{ service.http_listen }}
+    http_port: {{ service.http_port }}
+    hot_reload: {{ service.hot_reload }}
+    coro_stack_size: {{ service.coro_stack_size }}
     scheduler:
-        cap: {{ scheduler_cap }}
-        base: {{ scheduler_base }}
+        cap: {{ service.scheduler_cap }}
+        base: {{ service.scheduler_base }}
     json:
-        convert_nan_to_null: {{ json_convert_nan_to_null }}
+        convert_nan_to_null: {{ service.json_convert_nan_to_null }}
     sp:
-        convert_from_str_to_num: {{ sp_convert_from_str_to_num }}
+        convert_from_str_to_num: {{ service.sp_convert_from_str_to_num }}
 
-# parsers_file: {{ parsers_file }}
-# plugins_file: {{ plugins_file }}
-# streams_file: {{ flush }}
+{% if parsers | length > 0 %}
+{{ parsers }}
+{% endif %}
 
-parsers: []
+{% if multiline_parsers | length > 0 %}
+{{ multiline_parsers }}
+{% endif %}
 
-multiline_parsers: []
+{% if plugins | length > 0 %}
+{{ plugins }}
+{% endif %}
 
-pipeline: {}
+{% if upstream_servers | length > 0 %}
+{{ upstream_servers }}
+{% endif %}
 
-plugins: []
+{% if env | length > 0 %}
+{{ env }}
+{% endif %}
 
-upstream_servers: []
+{% if includes | length > 0 %}
+{{ includes }}
+{% endif %}
 
-env: []
-
-includes:
-  - parsers.conf
-  - plugins.conf
-  - 
+pipeline:
+    {% if inputs | length > 0 %}
+    {{ inputs }}
+    {% endif %}
+    {% if filters | length > 0 %}
+    {{ filters }}
+    {% endif %}
+    {% if outputs | length > 0 %}
+    {{ outputs }}
+    {% endif %}

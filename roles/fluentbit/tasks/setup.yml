@@ -1,6 +1,6 @@
 - name: Load fluent-bit Config
   template:
     src: fluent-bit.yml.j2
-    dest: "{{ configuration_dir }}/fluent-bit.yml"
+    dest: "{{ configuration_dir }}/{{ configuration_file_name }}"
     mode: 0644
   notify: restart_fluentbit

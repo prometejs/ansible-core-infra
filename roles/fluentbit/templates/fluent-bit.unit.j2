@@ -1,29 +1,20 @@
 # Fluent-bit service for systemd
 [Unit]
-Description=Fluentbit daemon
+Description=Fluent Bit Service
+Documentation=https://docs.fluentbit.io/manual/
+Requires=network.target
 After=network.target
 
 [Service]
 Type=simple
-ExecStart={{ supervisor_bin_path }} -c {{ supervisor_config_path }}/supervisord.conf
-ExecStop={{ supervisorctl_bin_path }} $OPTIONS shutdown
-ExecReload={{ supervisorctl_bin_path }} $OPTIONS reload
-KillMode=process
+ExecStart={{ bin_path }} --config {{ configuration_dir }}/{{ configuration_file_name }}
+ExecReload=/bin/systemctl restart fluent-bit.service
+KillMode=control-group
 Restart=on-failure
-RestartSec=42s
+RestartSec=5s
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=fluent-bit
 
 [Install]
 WantedBy=multi-user.target
-
-
-# [Unit]
-# Description=My Custom Service
-# After=network.target
-
-# [Service]
-# Type=simple
-# ExecStart=/usr/bin/my-command --option
-# Restart=on-failure
-
-# [Install]
-# WantedBy=multi-user.target
