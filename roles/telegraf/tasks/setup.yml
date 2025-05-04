@@ -1,0 +1,7 @@
+- name: Load Telegraf Config
+  template:
+    src: telegraf.conf.j2
+    dest: "{{ telegraf_configuration_dir }}/telegraf.conf"
+    mode: 0744
+  become: true
+  notify: restart_telegraf  

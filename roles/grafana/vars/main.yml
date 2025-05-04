@@ -1,0 +1,4 @@
+oss: "{{ lookup('file', 'vars/oss/main.yml') | from_yaml }}"
+alloy: "{{ lookup('file', 'vars/alloy/main.yml') | from_yaml }}"
+loki: "{{ lookup('file', 'vars/loki/main.yml') | from_yaml }}"
+mirmir: "{{ lookup('file', 'vars/mirmir/main.yml') | from_yaml }}"

@@ -1,0 +1,68 @@
+[global_tags]
+{% if telegraf_tags is defined and telegraf_tags != None %}
+{% for key, value in telegraf_tags.iteritems()%}
+   {{ key }} = "{{ value }}"
+{% endfor %}
+{% endif %}
+
+[agent]
+  interval = "{{ telegraf_agent_interval }}"
+  round_interval = {{ telegraf_agent_round_interval }}
+  metric_batch_size = {{ telegraf_agent_metric_batch_size }}
+  metric_buffer_limit = {{ telegraf_agent_metric_buffer_limit }}
+  collection_jitter = "{{ telegraf_agent_collection_jitter }}"
+  flush_interval = "{{ telegraf_agent_flush_interval }}"
+  flush_jitter = "{{ telegraf_agent_flush_jitter }}"
+  precision = "{{ telegraf_agent_precision }}"
+  debug = {{ telegraf_agent_debug }}
+  quiet = {{ telegraf_agent_quiet }}
+  omit_hostname = {{ telegraf_agent_omit_hostname }}
+{% if telegraf_hostname is defined and telegraf_hostname != None %}
+  hostname = "{{ telegraf_hostname }}"
+{% else %}
+  hostname = "{{ ansible_hostname }}"
+{% endif %}
+
+###############################################################################
+#                            OUTPUT PLUGINS                                   #
+###############################################################################
+{% if telegraf_output_plugins is defined and telegraf_output_plugins is iterable %}
+{% for item in telegraf_output_plugins %}
+{% if item.host_groups is not defined or inventory_hostname in item.host_groups %}
+[[outputs.{{ item.name }}]]
+{% if item.config is defined and item.config is iterable %}
+{% for key, value in item.config.iteritems() %}
+{% if value is sequence and value is not string %}
+  {{ key }} = [ "{{ value|join('", "') }}" ]
+{% elif value == "true" or value == "false" or value is number %}
+  {{ key }} = {{ value }}
+{% else %}
+  {{ key }} = "{{ value }}"
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+###############################################################################
+#                            INPUT PLUGINS                                    #
+###############################################################################
+{% if telegraf_input_plugins is defined and telegraf_input_plugins is iterable %}
+{% for item in telegraf_input_plugins %}
+{% if item.host_groups is not defined or inventory_hostname in item.host_groups %}
+[[inputs.{{ item.name }}]]
+{% if item.config is defined and item.config is iterable %}
+{% for key, value in item.config.iteritems() %}
+{% if value is sequence and value is not string %}
+  {{ key }} = [ "{{ value|join('", "') }}" ]
+{% elif value == "true" or value == "false" or value is number %}
+  {{ key }} = {{ value }}
+{% else %}
+  {{ key }} = "{{ value }}"
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}

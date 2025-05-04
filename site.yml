@@ -6,6 +6,9 @@
   become: true
   roles:
     - common
+    - supervisord
+    - telegraf
+    - fluentbit
 
 - hosts: 
     - ca
@@ -20,6 +23,12 @@
   become: true
   roles:
     - web
+
+- hosts: 
+    - grafana
+  become: true
+  roles:
+    - grafana
 
 # Run last
 - hosts: all

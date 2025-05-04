@@ -13,6 +13,11 @@
 
 - hosts: workstation
   tasks:
+    - name: Install Ansible Dependencies
+      local_action: ansible.builtin.shell ansible-galaxy install -r requirements.yml
+
+- hosts: workstation
+  tasks:
     - name: Register All Hosts Fingerprint As Trusted Known Hosts
       local_action: ansible.builtin.shell ./setup.sh {{ host }}
       loop: "{{ groups['all'] }}"

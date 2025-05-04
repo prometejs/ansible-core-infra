@@ -1,0 +1,39 @@
+- name: Manage Grafana OSS
+  become: yes
+  roles:
+    - role: grafana.grafana.grafana
+      vars: "{{ oss }}"
+  register: oss
+
+- name: Manage Grafana Alloy
+  become: yes
+  roles:
+    - role: grafana.grafana.alloy
+      vars: "{{ alloy }}"
+  register: alloy
+
+- name: Manage Grafana Loki
+  become: yes
+  roles:
+    - role: grafana.grafana.loki
+      vars: "{{ loki }}"
+  register: loki
+
+- name: Manage Grafana Mirmir
+  become: yes
+  roles:
+    - role: grafana.grafana.mimir
+      vars: "{{ mimir }}"
+  register: mimir
+
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ oss }}"
+      - "{{ alloy }}"
+      - "{{ loki }}"
+      - "{{ mimir }}"

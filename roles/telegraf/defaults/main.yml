@@ -1,0 +1,39 @@
+telegraf_configuration_dir: /etc/telegraf
+telegraf_install_version: stable
+
+###############################################################################
+#                      TELEGRAF CONFIGURATION VARIABLES                       #
+###############################################################################
+telegraf_agent_interval: "10s"
+telegraf_agent_round_interval: "true"
+telegraf_agent_metric_batch_size: 1000
+telegraf_agent_metric_buffer_limit: 10000
+telegraf_agent_collection_jitter: "0s"
+telegraf_agent_flush_interval: "10s"
+telegraf_agent_flush_jitter: "0s"
+telegraf_agent_precision: ""
+telegraf_agent_debug: "false"
+telegraf_agent_quiet: "false"
+telegraf_agent_omit_hostname: "false"
+telegraf_tags:
+
+###############################################################################
+#                            OUTPUT PLUGINS                                   #
+###############################################################################
+telegraf_output_plugins:
+  - name: "prometheus_client"
+    config:
+      listen: ":9273"
+      path: "/metrics"
+      metric_version: 2
+
+###############################################################################
+#                            INPUT PLUGINS                                    #
+###############################################################################
+telegraf_input_plugins:
+  - name: procstat
+    config:
+      pattern: ".*"
+      pid_tag: true
+      cmdline_tag: false
+      fieldpass: ["cpu_time", "memory_rss", "memory_swap", "memory_vms", "num_threads"]

@@ -1,0 +1,21 @@
+- name: Install Dependencies
+  package: 
+    name: "{{ item }}" 
+    state: present 
+    update_cache: yes 
+    cache_valid_time: 3600
+  loop:
+    - python-httplib2
+    - python-apt
+    - curl
+
+- name: Install Telegraf
+  package: 
+    name: telegraf
+    state: latest  
+
+- name: Start Telegraf
+  service:
+    name: telegraf
+    state: started
+    enabled: yes

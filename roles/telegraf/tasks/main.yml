@@ -1,0 +1,17 @@
+- name: Install & Start Telegraf
+  include_tasks: install.yml
+  register: install
+
+- name: Configure Telegraf
+  include_tasks: setup.yml
+  register: setup
+
+# Run last
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ install }}"
+      - "{{ setup }}"

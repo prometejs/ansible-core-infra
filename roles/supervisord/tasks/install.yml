@@ -1,0 +1,15 @@
+- name: Install Supervisord
+  pip:
+    name: supervisor
+    state: present
+    version: "{{ supervisor_version | default(omit) }}"
+
+- name: Start Supervisord
+  service:
+    name: supervisord
+    state: started
+
+- name: Ensure Supervisor is enabled at boot (if configured).
+  service:
+    name: supervisord
+    enabled: true

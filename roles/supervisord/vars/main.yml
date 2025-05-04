@@ -1,0 +1,7 @@
+supervisor_version: '4.2.5'
+supervisor_unix_http_server_enable: false
+supervisor_unix_http_server_password_protect: false
+supervisor_inet_http_server_password_protect: false
+supervisor_programs: "{{ lookup('file', 'vars/programs.yml') | from_yaml }}"
+# supervisor_user: root # hash secret [decrypt when creating creds]
+# supervisor_password: 'my_secret_password' # hash secret [decrypt when creating creds]

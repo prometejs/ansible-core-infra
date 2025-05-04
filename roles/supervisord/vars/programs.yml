@@ -1,0 +1,16 @@
+# - name: 'apache'
+#   command: apache2ctl -c "ErrorLog /dev/stdout" -DFOREGROUND
+#   state: present
+#   host_groups: []
+#   configuration: |
+#     autostart=true
+#     autorestart=true
+#     startretries=1
+#     startsecs=1
+#     redirect_stderr=true
+#     stderr_logfile=/var/log/apache-err.log
+#     stdout_logfile=/var/log/apache-out.log
+#     user=root
+#     killasgroup=true
+#     stopasgroup=true
+#  
