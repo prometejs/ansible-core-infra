@@ -30,6 +30,30 @@
   roles:
     - grafana
 
+- hosts: 
+    - etcd
+  become: true
+  roles:
+    - etcd
+
+- hosts: 
+    - telegraf
+  become: true
+  roles:
+    - telegraf
+
+- hosts: 
+    - fluentbit
+  become: true
+  roles:
+    - fluentbit
+
+- hosts: 
+    - supervisord
+  become: true
+  roles:
+    - supervisord
+
 # Run last
 - hosts: all
   name: Report
