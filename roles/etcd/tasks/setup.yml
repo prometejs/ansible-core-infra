@@ -1,0 +1,75 @@
+- name: Load `etcd` Config
+  template:
+    src: etcd.conf.yaml.j2
+    dest: "{{ configuration_dir }}/{{ configuration_file_name }}"
+    mode: 0644
+  notify: restart_etcd
+
+- name: Load `etcd` Service Config
+  template:
+    src: etcd.unit.j2
+    dest: /etc/systemd/system/etcd.service
+    owner: root
+    group: root
+    mode: 0644
+  when: "ansible_service_mgr == 'systemd'"
+  notify: restart_etcd
+
+- name: Import Self Signed Certs
+  vars:
+    self_signed_certs: "{{ self_signed_certs }}"
+  include_role:
+    name: common
+    tasks_from: ssl
+  register: ssl
+
+- name: Create Host Data Directory
+  file:
+    path: /var/lib/etcd/{{ inventory_hostname }}.etcd
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Create Directory For `etcd` Configuration
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+      - /etc/etcd
+      - /etc/etcd/ssl
+
+
+
+# - name: copy over the CA certificate
+#   copy:
+#     src: ./../artifacts/ca.crt
+#     remote_src: False
+#     dest: /etc/etcd/ssl/ca.crt
+#     owner: root
+#     group: root
+#     mode: 0644
+#   tags: [ copy_ca ]
+
+# - name: copy over the `etcd` member certificate
+#   copy:
+#     src: ./../artifacts/{{inventory_hostname}}.crt
+#     remote_src: False
+#     dest: /etc/etcd/ssl/server.crt
+#     owner: root
+#     group: root
+#     mode: 0644
+#   tags: [ copy_ca ]
+
+# - name: copy over the `etcd` member key
+#   copy:
+#     src: ./../artifacts/{{inventory_hostname}}.key
+#     remote_src: False
+#     dest: /etc/etcd/ssl/server.key
+#     owner: root
+#     group: root
+#     mode: 0600
+#   tags: [ copy_ca ]

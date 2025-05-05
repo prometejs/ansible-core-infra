@@ -1,0 +1,11 @@
+[Unit]
+Description=etcd distributed reliable key-value store
+
+[Service]
+Type=notify
+ExecStart={{ os-system-path }}/etcd --config-file {{ configuration_dir }}/{{ configuration_file_name }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

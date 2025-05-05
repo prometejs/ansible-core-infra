@@ -1,0 +1,85 @@
+{% if tls.enabled %}
+  {% set scheme = "https" %}
+{% else %}
+  {% set scheme = "http" %}
+{% endif %}
+
+name: {{ inventory_hostname }} # Human-readable name for this member.
+data-dir: /var/lib/etcd/{{ inventory_hostname }}.etcd # Path to the data directory.
+snapshot-count: {{ snapshot_count | default(10000) }} # Number of committed transactions to trigger a snapshot to disk.
+heartbeat-interval: {{ heartbeat_interval | default(100) }} # Time (in milliseconds) of a heartbeat interval.
+election-timeout: {{ election_timeout | default(1000) }}  # Time (in milliseconds) for an election to timeout.
+quota-backend-bytes: {{ quota_backend_bytes | default(0) }} # Raise alarms when backend size exceeds the given quota. 0 means use the default quota.
+max-snapshots: {{ max_snapshots | default(5) }} # Maximum number of snapshot files to retain (0 is unlimited).
+max-wals: {{ max_wals | default(5) }} # Maximum number of wal files to retain (0 is unlimited).
+
+{% if wal_dir %}
+wal-dir: {{ wal_dir }} # Path to the dedicated wal directory.
+{% endif %}
+
+{% if cors %}
+cors: {{ cors }} # Comma-separated white list of origins for CORS (cross-origin resource sharing).
+{% endif %}
+
+strict-reconfig-check: {{ strict_reconfig_check | default(omit) }} # Reject reconfiguration requests that would cause quorum loss.
+enable-pprof: {{ enable_pprof | default(omit) }} # Enable runtime profiling data via HTTP server
+
+proxy: {{ proxy | default(omit) }} # Valid values include 'on', 'readonly', 'off'
+proxy-failure-wait: {{ proxy_failure_wait | default(omit) }} # Time (in milliseconds) an endpoint will be held in a failed state.
+proxy-refresh-interval: {{ proxy_refresh_interval | default(omit) }} # Time (in milliseconds) of the endpoints refresh interval.
+proxy-dial-timeout: {{ proxy_dial_timeout | default(omit) }} # Time (in milliseconds) for a dial to timeout.
+proxy-write-timeout: {{ proxy_write_timeout | default(omit) }} # Time (in milliseconds) for a write to timeout.
+proxy-read-timeout: {{ proxy_read_timeout | default(omit) }} # Time (in milliseconds) for a read to timeout.
+
+log-level: {{ log_level | default('debug') }} # Enable debug-level logging for etcd.
+logger: {{ logger | default('zap') }} 
+log-outputs: {{ log_outputs | default(['stderr']) }}   # Specify 'stdout' or 'stderr' to skip journald logging even when running under systemd.
+force-new-cluster: {{ force_new_cluster | default(false) }} # Force to create a new one member cluster.
+auto-compaction-mode: {{ auto_compaction_mode | default(omit) }}
+auto-compaction-retention: {{ auto_compaction_retention | default(omit) }}
+
+listen-peer-urls: {{ scheme }}://{{ hostvars[inventory_hostname]['ansible_facts']['eth0']['ipv4']['address'] }}:2380,{{ scheme }}://127.0.0.1:2380 # List of comma separated URLs to listen on for peer traffic.
+listen-client-urls: {{ scheme }}://{{ hostvars[inventory_hostname]['ansible_facts']['eth0']['ipv4']['address'] }}:2379,{{ scheme }}://127.0.0.1:2379 # List of comma separated URLs to listen on for client traffic.
+
+initial-advertise-peer-urls: {{ scheme }}://{{ hostvars[inventory_hostname]['ansible_facts']['eth0']['ipv4']['address'] }}:2380 # List of this member's peer URLs to advertise to the rest of the cluster. The URLs needed to be a comma-separated list.
+advertise-client-urls: {{ scheme }}://{{ hostvars[inventory_hostname]['ansible_facts']['eth0']['ipv4']['address'] }}:2379 # List of this member's client URLs to advertise to the public. The URLs needed to be a comma-separated list.
+
+{% if discovery is defined and discovery.url is defined %}
+discovery: {{ discovery.url | default(omit) }} # Discovery URL used to bootstrap the cluster.
+{% endif %}
+{% if discovery is defined and discovery.fallback is defined %}
+discovery-fallback: {{ discovery.fallback }} # Valid values include 'exit', 'proxy'
+{% endif %}
+{% if discovery is defined and discovery.proxy is defined %}
+discovery-proxy: {{ discovery.proxy }} # HTTP proxy to use for traffic to discovery service.
+{% endif %}
+{% if discovery is defined and discovery.srv is defined %}
+discovery-srv: {{ discovery.srv | default(omit) }} # DNS domain used to bootstrap initial cluster.
+{% endif %}
+
+initial-cluster-state: 'new' # Initial cluster state ('new' or 'existing').
+{% if initial_cluster_token %}
+initial-cluster-token: {{initial_cluster_token}} # Initial cluster token for the etcd cluster during bootstrap.
+{% endif %}
+initial-cluster: {% for host in groups['etcd'] %}{{ hostvars[host]['ansible_facts']['hostname'] }}={{scheme}}://{{ hostvars[host]['ansible_facts']['eth0']['ipv4']['address'] }}:2380{% if not loop.last %},{% endif %}{% endfor %} # Comma separated string of initial cluster configuration for bootstrapping.
+
+{% if tls.enabled %}
+{% if tls is defined and tls.client is defined %}
+client-transport-security:
+  cert-file: {{ tls.client.cert | default(omit) }} # Path to the client server TLS cert file.
+  key-file: {{ tls.client.key | default(omit) }}  # Path to the client server TLS key file.
+  client-cert-auth: {{ tls.client.auth | default(false) }}  false # Enable client cert authentication.
+  trusted-ca-file: {{ tls.client.ca | default(omit) }}  # Path to the client server TLS trusted CA cert file.
+  auto-tls: {{ tls.client.auto | default(false) }}  # Client TLS using generated certificates
+{% endif %}
+
+{% if tls is defined and tls.peer is defined %}
+peer-transport-security:
+  cert-file: {{ tls.peer.cert | default(omit) }} # Path to the peer server TLS cert file.
+  key-file: {{ tls.peer.key | default(omit) }} # Path to the peer server TLS key file.
+  client-cert-auth: {{ tls.peer.auth | default(false) }} # Enable peer client cert authentication.  
+  trusted-ca-file: {{ tls.peer.ca | default(omit) }} # Path to the peer server TLS trusted CA cert file.
+  allowed-cn: {{ tls.peer.allowed_cn | default(omit) }} # Allowed CN for inter peer authentication.
+  allowed-hostname: {{ tls.peer.allowed_hostnames | default(omit) }} # Allowed TLS hostname for inter peer authentication.
+{% endif %}
+{% endif %}

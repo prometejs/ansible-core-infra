@@ -1,0 +1,27 @@
+- name: create a etcd service
+  copy:
+    src: etcd.service
+    dest: /etc/systemd/system/etcd.service
+    remote_src: False
+    owner: root
+    group: root
+    mode: 0644
+  tags: [ add_service ]
+
+- name: enable the etcd service
+  systemd:
+    name: etcd
+    enabled: yes
+    arguments: --config-file {{ configuration_dir }}/{{ configuration_file_name }}
+  tags: [ enable_etcd_service ]
+
+- name: daemon reload
+  systemd:
+    daemon_reload: yes
+  tags: [ daemon_reload ]
+
+- name: Make sure a service is running
+  systemd: 
+    state: started 
+    name: etcd
+  tags: [ start_etcd_service ]

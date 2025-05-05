@@ -1,0 +1,6 @@
+- name: restart_etcd
+  service:
+    name: restart_etcd
+    enabled: true
+    state: restarted
+  become: true

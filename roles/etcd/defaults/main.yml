@@ -1,0 +1,13 @@
+version: v3.6.0-rc.4
+architecture: amd64
+os-system-path: /usr/local/bin/
+os: linux
+
+configuration_dir: /etc/etcd/
+configuration_file_name: etcd.conf.yaml
+
+tls:
+  enabled: true
+  cert-file: /etc/ssl/certs/server.crt
+  key-file: /etc/ssl/private/server.key
+  trusted-ca-file: /etc/ssl/certs/ca.crt

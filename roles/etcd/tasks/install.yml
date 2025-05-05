@@ -1,0 +1,32 @@
+- name: Download `etcd` Binary `tar.gz` File
+  get_url:
+    url: https://github.com/etcd-io/etcd/releases/download/{{ version }}/etcd-{{ version }}-{{ os }}-{{ architecture }}.tar.gz
+    dest: /home/etcd-{{ version }}-{{ os }}-{{ architecture }}.tar.gz
+    timeout: 250
+    backup: yes
+    mode: 0440
+
+- name: Extract `etcd` `.tar.gz` File
+  unarchive:
+    src: /home/etcd-{{ version }}-{{ os }}-{{ architecture }}.tar.gz
+    dest: /home
+    remote_src: yes
+
+- name: Add `etcd` Binaries To System Path
+  copy:
+    src: /home/etcd-{{ version }}-{{ os }}-{{ architecture }}/{{ item }}
+    dest: "{{os-system-path}}/{{ item }}"
+    mode: 0777
+    remote_src: yes
+  loop:
+    - etcd
+    - etcdctl
+    - etcdutl
+
+- name: Remove Download Files From `/home` directory
+  file:
+    path: '/home/{{ item }}'
+    state: absent
+  loop:
+    - etcd-{{ version }}-{{ os }}-{{ architecture }}
+    - etcd-{{ version }}-{{ os }}-{{ architecture }}.tar.gz

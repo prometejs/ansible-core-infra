@@ -4,3 +4,13 @@
     dest: "{{ configuration_dir }}/{{ configuration_file_name }}"
     mode: 0644
   notify: restart_fluentbit
+
+- name: Load fluent-bit Service Config
+  template:
+    src: fluent-bit.unit.j2
+    dest: /etc/systemd/system/fluent-bit.service
+    owner: root
+    group: root
+    mode: 0644
+  when: "ansible_service_mgr == 'systemd'"
+  notify: restart_fluentbit
