@@ -54,6 +54,12 @@
   roles:
     - supervisord
 
+- hosts: 
+    - bitcoin-core
+  become: true
+  roles:
+    - bitcoin-core
+
 # Run last
 - hosts: all
   name: Report
