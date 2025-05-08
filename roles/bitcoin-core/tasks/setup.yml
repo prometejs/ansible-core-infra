@@ -1,0 +1,83 @@
+---
+- name: Bitcoind | Ensure GPG base keyring directory is set as a fact for this OS
+  ansible.builtin.set_fact:
+    gpg_home_dir: /etc/apt/trusted.gpg.d
+
+- name: "Bitcoind | Ensure group '{{ bitcoin_group }}' exists"
+  ansible.builtin.group:
+    name: "{{ bitcoin_group }}"
+    state: present
+
+- name: "Bitcoind | Ensure user '{{ bitcoin_user }}' with a primary group of '{{ bitcoin_group }}' exists"
+  ansible.builtin.user:
+    name: "{{ bitcoin_user }}"
+    group: "{{ bitcoin_group }}"
+    state: present
+    password: "*"
+
+- include_tasks: gpg.yml
+  vars:
+    gpg_user: "{{ item.name }}"
+    gpg_id: "{{ item.id }}"
+  with_items: "{{ bitcoin_pgp_builders_pub_key }}"
+  when: bitcoin_pgp_builders_pub_key is defined and bitcoin_pgp_builders_pub_key | length > 0
+
+- name: "Bitcoind | Ensure '/usr/local/bitcoin-core-{{ bitcoin_version }}-{{ bitcoin_arch }}' directory exists"
+  ansible.builtin.file:
+    path: /usr/local/bitcoin-core-{{ bitcoin_version }}
+    state: directory
+
+- name: "Bitcoind | Unpack 'bitcoin-core-{{ bitcoin_version }}-{{ bitcoin_arch }}.tar.gz' into '/usr/local/bitcoin-core-{{ bitcoin_version }}'"
+  ansible.builtin.unarchive:
+    src: /tmp/bitcoin-core-{{ bitcoin_version }}-{{ bitcoin_arch }}.tar.gz
+    dest: /usr/local/bitcoin-core-{{ bitcoin_version }}
+    remote_src: yes
+    owner: "{{ bitcoin_user }}"
+    group: "{{ bitcoin_group }}"
+    extra_opts:
+      - --strip-components=1
+
+- name: "Bitcoind | Copy Bitcoin systemd file into '/lib/systemd/system/bitcoind-{{ bitcoin_network }}.service'"
+  ansible.builtin.template:
+    src: bitcoind.service.j2
+    dest: /lib/systemd/system/bitcoind-{{ bitcoin_network }}.service
+  notify:
+    - Bitcoind | Ensure bitcoind systemd unit is restarted
+
+- name: "Bitcoind | Ensure Bitcoin configuration directory '/etc/bitcoin/{{ bitcoin_network }}' exists"
+  ansible.builtin.file:
+    path: /etc/bitcoin/{{ bitcoin_network }}
+    state: directory
+    owner: "{{ bitcoin_user }}"
+    group: "{{ bitcoin_group }}"
+    mode: 0750
+
+- name: "Bitcoind | Copy bitcoin.conf file into '/etc/bitcoin/{{ bitcoin_network }}'"
+  ansible.builtin.template:
+    src: bitcoin.conf.j2
+    dest: /etc/bitcoin/{{ bitcoin_network }}/bitcoin.conf
+    owner: "{{ bitcoin_user }}"
+    group: "{{ bitcoin_group }}"
+  notify:
+    - Bitcoind | Ensure bitcoind systemd unit is restarted
+
+- name: "Bitcoind | Ensure Bitcoin data directory '{{ bitcoin_data_dir }}' exists"
+  ansible.builtin.file:
+    path: "{{ bitcoin_data_dir }}"
+    state: directory
+
+- name: "Bitcoind | Ensure Bitcoin data directory '{{ bitcoin_data_dir }}' uses the correct permissions"
+  ansible.builtin.file:
+    path: "{{ bitcoin_data_dir }}"
+    state: directory
+    owner: "{{ bitcoin_user }}"
+    group: "{{ bitcoin_group }}"
+    mode: 0750
+
+- name: "Bitcoind | Ensure symbolic link from '/etc/bitcoin/{{ bitcoin_network }}' to '/home/{{ bitcoin_user }}/.bitcoin' exists"
+  file:
+    src: /etc/bitcoin/{{ bitcoin_network }}
+    dest: /home/{{ bitcoin_user }}/.bitcoin
+    state: link
+    owner: "{{ bitcoin_user }}"
+    group: "{{ bitcoin_group }}"

@@ -1,0 +1,6 @@
+- name: "Bitcoind | Ensure 'bitcoind-{{ bitcoin_network }}.service' systemd unit is enabled and started"
+  ansible.builtin.service:
+    name: bitcoind-{{ bitcoin_network }}.service
+    daemon_reload: yes
+    enabled: true
+    state: started

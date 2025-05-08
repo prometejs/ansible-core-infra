@@ -1,0 +1,24 @@
+- name: Bitcoind | Ensure dependencies are installed
+  ansible.builtin.apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - gpg
+    - dirmngr
+  # We only need to install these dependencies if we
+  # have the GPG keys to verify the SHA256SUMS file
+  when: bitcoin_pgp_builders_pub_key is defined and bitcoin_pgp_builders_pub_key | length > 0
+
+- name: "Bitcoind | Download SHA256SUMS for Bitcoin v{{ bitcoin_version }} into '/tmp/SHA256SUMS'"
+  ansible.builtin.get_url:
+    url: https://bitcoincore.org/bin/bitcoin-core-{{ bitcoin_version }}/SHA256SUMS
+    dest: /tmp/SHA256SUMS
+    http_agent: yourbtc-ansible
+
+- name: "Bitcoind | Download Bitcoin Core v{{ bitcoin_version }} into '/tmp/bitcoin-core-{{ bitcoin_version }}-{{ bitcoin_arch }}.tar.gz'"
+  ansible.builtin.get_url:
+    url: https://bitcoincore.org/bin/bitcoin-core-{{ bitcoin_version }}/bitcoin-{{ bitcoin_version }}-{{ bitcoin_arch }}.tar.gz
+    dest: /tmp/bitcoin-core-{{ bitcoin_version }}-{{ bitcoin_arch }}.tar.gz
+    checksum: sha256:https://bitcoincore.org/bin/bitcoin-core-{{ bitcoin_version }}/SHA256SUMS
+    http_agent: yourbtc-ansible
