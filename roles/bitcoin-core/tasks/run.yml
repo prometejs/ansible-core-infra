@@ -2,5 +2,5 @@
   ansible.builtin.service:
     name: bitcoind-{{ bitcoin_network }}.service
     daemon_reload: yes
-    enabled: true
     state: started
+    enabled: true
