@@ -37,9 +37,10 @@
 10.0.2.5
 
 [etcd]
-10.0.2.3
-10.0.2.4
-10.0.2.5
+10.0.2.[3:5] # Range for etcd nodes
 
 [bitcoin-core]
+10.0.2.3
+
+[github-runner]
 10.0.2.3

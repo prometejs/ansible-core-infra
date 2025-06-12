@@ -9,6 +9,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true # Cancel previous runs of the same workflow for the same branch
+
 jobs:
   ansible-test:
     runs-on: ubuntu-latest # tbd

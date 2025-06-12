@@ -13,6 +13,10 @@ on:
           - production
           - staging  
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false # Do not cancel previous runs of the same workflow for the same branch, wait for completion
+
 jobs:
   bootstrap-sites:
     runs-on: ubuntu-latest # tbd

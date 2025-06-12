@@ -1,0 +1,32 @@
+---
+- name: Github Runner | Ensure '/usr/local/github-runner-{{ os }}-{{ arch }}-{{ version }}' Directory Exists
+  ansible.builtin.file:
+    path: /usr/local/github-runner-{{ os }}-{{ arch }}-{{ version }}
+    state: directory
+
+- name: Github Runner | Install Dependencies
+  ansible.builtin.apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  loop:
+    - zlib1g
+    - libkrb5-3
+    - liblttng-ust1
+    - libssl1.1
+    - libicu63
+    - netcat
+
+- name: Github Runner Controller | Ensure '/usr/local/github-runner-controller-{{ os }}-{{ arch }}-{{ version }}' Directory Exists"
+  ansible.builtin.file:
+    path: /usr/local/github-runner-controller-{{ os }}-{{ arch }}-{{ version }}
+    state: directory
+
+- name: Github Runner Controller | Load Webhook Controller Secret Exists
+  ansible.builtin.copy:
+    dest: /home/{{ user }}/github_webhook_secret.txt
+    content: |
+      {{ webhook_secret }}
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    mode: '0600'

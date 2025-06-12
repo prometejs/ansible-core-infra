@@ -1,0 +1,16 @@
+- name: Prepare `github runner` Environment
+  include_tasks: setup.yml
+  register: setup
+
+- name: Install `github runner` 
+  include_tasks: install.yml
+  register: install
+
+- name: Create Report Registry
+  include_role:
+    name: common
+    tasks_from: registry
+  vars:
+    role_registry: 
+      - "{{ install }}"
+      - "{{ setup }}"

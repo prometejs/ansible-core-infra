@@ -1,0 +1,23 @@
+http_agent: stardust
+user:
+group:
+
+# GitHub Runner Installation Config
+version: 2.0.0
+os: "{{ ansible_distribution | lower }}"
+arch: "{{ ansible_architecture | lower }}"
+pkg_ext: tar.gz
+hash: 
+
+# GitHub Webhook Config
+repo: # myorg/myrepo
+webhook: 
+gh_user: 
+gh_token: 
+state: true
+
+# GitHub Runner Config
+name: actions-runner
+labels: self-hosted,{{ ansible_distribution | lower }},{{ ansible_architecture | lower }}
+disable_update: false
+ephemeral: true 

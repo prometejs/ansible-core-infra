@@ -1,0 +1,63 @@
+#!/bin/bash
+
+file_path = "{{ github_runner_secret_file_path }}"
+
+# check if the file exists
+if [[ ! -f "$file_path" ]]; then
+    echo "Error: Secret File does not exist."
+    exit 1
+fi
+
+# check if the file is readable
+if [[ ! -r "$file_path" ]]; then
+    echo "Error: Secret File is not readable."
+    exit 1
+fi
+
+# read the secret token, trimming any leading/trailing whitespace
+secret=$(<"$file_path")
+# remove leading whitespace
+secret="${secret#"${secret%%[![:space:]]*}"}"  
+# remove trailing whitespace
+secret="${secret%"${secret##*[![:space:]]}"}"
+
+# Check if the secret is empty
+if [[ -z "$secret" ]]; then
+    echo "Error: secret is not set."
+    exit 1
+fi
+
+# Start a simple HTTP server using netcat
+while true; do
+  # Listen on port {{ webhook_port }} and process incoming requests
+  nc -l -p {{ webhook_port }} -q 1 | while read line; do
+    # Read the headers
+    if [[ "$line" == $'\r' ]]; then
+      # Read the payload
+      read -r payload
+      echo "Received payload: $payload"
+
+      # Extract the signature from headers (you may need to adjust this depending on your setup)
+      signature_header=$(echo "$line" | grep -i 'X-Hub-Signature-256' | awk '{print $2}' | tr -d '\r')
+
+      # Compute HMAC SHA256 signature
+      computed_signature="sha256=$(echo -n "$payload" | openssl dgst -sha256 -hmac "$secret" | sed 's/^.* //')"
+
+      # Compare signatures
+      if [ "$computed_signature" != "$signature_header" ]; then
+        echo "Invalid signature. Request not from GitHub."
+        continue
+      fi
+
+      # Check if the event is 'workflow_job' with action 'queued'
+      event_type=$(echo "$payload" | jq -r '.action')
+      if [[ "$event_type" == "queued" ]]; then
+        echo "Workflow job queued. Starting a new runner..."
+
+        # Start a new self-hosted runner (replace with your runner start command)
+        /usr/local/github-runner-controller-{{ os }}-{{ arch }}-{{ version }}/github-runner-controller.sh &
+      fi
+      break
+    fi
+  done
+done

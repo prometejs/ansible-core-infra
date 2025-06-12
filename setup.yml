@@ -2,7 +2,8 @@
 # Init Scripts ## 
 # # # # # # # ### 
 
-- hosts: workstation
+- hosts: 
+    - workstation
   tasks:
     - name: Install Required Packages
       package:
@@ -10,14 +11,15 @@
         state: latest
       loop: 
         - sshpass
+        - python3-pip
 
-- hosts: workstation
-  tasks:
     - name: Install Ansible Dependencies
       local_action: ansible.builtin.shell ansible-galaxy install -r requirements.yml
 
-- hosts: workstation
-  tasks:
+    - name: Install Ansible Roles Python Dependencies
+      ansible.builtin.pip:
+        requirements: dependencies.python
+
     - name: Register All Hosts Fingerprint As Trusted Known Hosts
       local_action: ansible.builtin.shell ./setup.sh {{ host }}
       loop: "{{ groups['all'] }}"

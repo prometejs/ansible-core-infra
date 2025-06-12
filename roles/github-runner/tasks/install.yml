@@ -1,0 +1,60 @@
+# install and Configure
+# add script with web hook to run execute runner when github webhook is called
+---
+- name: Github Runner | Download Runner Package
+  ansible.builtin.get_url:
+    url:
+    checksum: sha256:{{ hash }}
+    http_agent: '{{http_agent}}'
+    dest: /tmp/github-runner-{{ os }}-{{ arch }}-{{ version }}.{{ pkg_ext }}
+
+- name: Github Runner | Unpack 'github-runner-{{ os }}-{{ arch }}-{{ version }}.{{ pkg_ext }}' into '/usr/local/github-runner-{{ os }}-{{ arch }}-{{ version }}'"
+  ansible.builtin.unarchive:
+    src: /tmp/github-runner-{{ os }}-{{ arch }}-{{ version }}.{{ pkg_ext }}
+    dest: /usr/local/github-runner-{{ os }}-{{ arch }}-{{ version }}
+    owner: "{{ user }}"
+    group: "{{ group }}"
+    remote_src: yes
+    extra_opts:
+      - --strip-components=1
+
+- name: Github Runner | Configure Runner
+  ansible.builtin.command:
+    argv:
+      - /usr/local/github-runner-{{ os }}-{{ arch }}-{{ version }}/config.sh
+      - "{{ '--unattended' if unattended | default(true) else omit }}"
+      - "{{ '--url ' + url if url is defined else omit }}"
+      - "{{ '--token ' + token if token is defined else omit }}"
+      - "{{ '--name ' + name | omit }}"
+      - "{{ '--runnergroup ' + runner_group if runner_group is defined else omit }}"
+      - "{{ '--labels ' + labels if labels is defined else omit }}"
+      - "{{ '--no-default-labels' if no_default_labels is defined else omit }}"
+      - "{{ '--local' if local is defined else omit }}"
+      - "{{ '--work ' + work if work is defined else omit }}"
+      - "{{ '--replace' if replace is defined else omit }}"
+      - "{{ '--pat' if pat is defined else omit }}"
+      - "{{ '--disableupdate' if disable_update else omit }}"
+      - "{{ '--ephemeral' if ephemeral else omit }}"
+
+- name: Github Runner Controller | Load Script
+  ansible.builtin.template:
+    src: controller.sh.j2
+    dest: /usr/local/github-runner-controller-{{ os }}-{{ arch }}-{{ version }}/github-runner-controller.sh
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  notify:
+    - restart github-runner-controller
+  # yield webhook address
+
+- name: Github Runner Webhook | Add Webhook to GitHub
+  community.general.github_webhook:
+    repository: "{{ repo }}"
+    url: "{{ webhook }}" # get this url from script above
+    content_type: json
+    secret: "{{ secret | omit }}"
+    events:
+      - workflow_job
+    user: "{{ gh_user }}"
+    token: "{{ gh_token }}"
+    insecure_ssl: "{{ insecure | default(false) }}"
+    state: "{{ state | default('present') }}"
