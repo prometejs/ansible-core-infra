@@ -1,0 +1,23 @@
+# only available for cloudflare enterprise customers
+- name: Create logpush job
+  cloudflare.logpush_job:
+    account_id: "{{ account_id }}"
+    job_name: "{{ logpush_job_name }}"
+    dataset: "{{ logpush_dataset }}"
+    destination_conf: "{{ logpush_destination_conf }}"
+    enabled: true
+  register: logpush_job
+
+- name: Ensure logpush job is created and enabled
+  assert:
+    that:
+      - logpush_job is not none
+      - logpush_job.job_name == logpush_job_name
+      - logpush_job.dataset == logpush_dataset
+    fail_msg: "Logpush job creation failed or job details do not match expected values."
+
+- name: Ensure logpush job is 
+  assert:
+    that:
+      - logpush_job.enabled is true
+    fail_msg: "Logpush job is not enabled as expected."

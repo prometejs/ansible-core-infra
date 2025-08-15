@@ -1,0 +1,11 @@
+- name: restart_cloudflared
+  service:
+    name: cloudflared
+    enabled: true
+    state: restarted
+
+- name: restart_warp
+  service:
+    name: warp
+    enabled: true
+    state: restarted

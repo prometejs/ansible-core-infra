@@ -1,0 +1,40 @@
+- name: Download the cloudflared Linux package.
+  shell: wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+
+- name: Depackage cloudflared.
+  shell: sudo dpkg -i cloudflared-linux-amd64.deb
+
+- name: Install the tunnel as a systemd service.
+  shell: "cloudflared service install {{ tunnel_token }}"
+
+# brew install cloudflared && 
+
+# sudo cloudflared service install eyJhIjoiYTQ2NTBiY2RjZjIwMTM0OTA4YTdiZGMzNzAwZTViODciLCJ0IjoiOGY3Mzg0ZjQtZjk4MC00OTk2LWI1ZjQtNGJkOTFlZmZhMjAyIiwicyI6Ik1EazBPR1V6TkdVdE5HWTBNUzAwTWpGakxUazBZelV0TmpGbFpUTXdZMkl5WXpObSJ9
+
+
+# sudo cloudflared service install eyJhIjoiYTQ2NTBiY2RjZjIwMTM0OTA4YTdiZGMzNzAwZTViODciLCJ0IjoiOGY3Mzg0ZjQtZjk4MC00OTk2LWI1ZjQtNGJkOTFlZmZhMjAyIiwicyI6Ik1EazBPR1V6TkdVdE5HWTBNUzAwTWpGakxUazBZelV0TmpGbFpUTXdZMkl5WXpObSJ9
+# sudo cloudflared service install eyJhIjoiYTQ2NTBiY2RjZjIwMTM0OTA4YTdiZGMzNzAwZTViODciLCJ0IjoiOGY3Mzg0ZjQtZjk4MC00OTk2LWI1ZjQtNGJkOTFlZmZhMjAyIiwicyI6Ik1EazBPR1V6TkdVdE5HWTBNUzAwTWpGakxUazBZelV0TmpGbFpUTXdZMkl5WXpObSJ9
+# cloudflared tunnel run --token eyJhIjoiYTQ2NTBiY2RjZjIwMTM0OTA4YTdiZGMzNzAwZTViODciLCJ0IjoiOGY3Mzg0ZjQtZjk4MC00OTk2LWI1ZjQtNGJkOTFlZmZhMjAyIiwicyI6Ik1EazBPR1V6TkdVdE5HWTBNUzAwTWpGakxUazBZelV0TmpGbFpUTXdZMkl5WXpObSJ9
+    
+- name: Start the tunnel.
+  systemd:
+    name: cloudflared
+    state: started
+    enabled: true
+    masked: no
+
+
+- name: Deploy an example Apache web server on port 80.
+  shell: apt update && apt -y install apache2
+
+- name: Edit the default Apache index file.
+  copy:
+    dest: /var/www/html/index.html
+    content: |
+      <!DOCTYPE html>
+      <html>
+      <body>
+        <h1>Hello Cloudflare!</h1>
+        <p>This page was created for a Cloudflare demo.</p>
+      </body>
+      </html>
